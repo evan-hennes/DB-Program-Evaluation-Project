@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 
 
 # Validation functions
@@ -215,10 +215,21 @@ def setup_data_entry_tab(notebook, status_label):
 
     # Add the rest later
 
-
+def reset_database():
+    # add the call to reset here:
+    messagebox.showinfo("Database Reset", "Database has been reset/initialized.")
+    
 def initialize_gui():
     window = tk.Tk()
     window.title("University Program Evaluation System")
+
+    menubar = tk.Menu(window)
+    window.config(menu=menubar)
+
+    settings_menu = tk.Menu(menubar, tearoff=0)
+    menubar.add_cascade(label="Settings", menu=settings_menu)
+
+    settings_menu.add_command(label="Reset Database", command=reset_database)
 
     # status Label for showing messages
     status_label = tk.Label(window, text="", font="Helvetica 12", fg="red")
