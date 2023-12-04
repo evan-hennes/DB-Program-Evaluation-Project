@@ -44,7 +44,8 @@ def validate_enrollment_count(entry):
 
 def validate_semester(entry):
     # Add appropriate validation for semester (e.g., format like 'Fall 2023')
-    return entry.get().strip().isalpha() and len(entry.get().strip().split()) == 2
+    return entry.get().strip().isalpha() and len(
+        entry.get().strip().split()) == 2
 
 
 validation_functions = {
@@ -59,12 +60,20 @@ validation_functions = {
 }
 
 
+def set_entry_validity(entry, is_valid):
+    if is_valid:
+        entry.config(foreground='black')
+    else:
+        entry.config(foreground="red")
+
+
 def check_entries(entries, submit_button):
-    all_valid = all(
-        validate_non_empty(entry)
-        and validation_functions.get(field, lambda e: True)(entry)
-        for field, entry in entries.items()
-    )
+    all_valid = True
+    for field, entry in entries.items():
+        is_valid = validate_non_empty(entry) and validation_functions.get(
+            field, lambda e: True)(entry)
+        set_entry_validity(entry, is_valid)
+        all_valid &= is_valid
     submit_button.config(state="normal" if all_valid else "disabled")
 
 
@@ -89,11 +98,11 @@ def add_data_fields(tab, field_names, validation_functions, status_label):
         label = tk.Label(frame, text=field, width=20)
         label.pack(side="left")
 
-        entry = tk.Entry(frame)
+        entry = tk.Entry(frame, highlightthickness=1)
         entry.pack(side="right", expand=True, fill="x")
         entry.bind(
-            "<KeyRelease>", lambda event, e=entry: check_entries(entries, submit_button)
-        )
+            "<KeyRelease>",
+            lambda event, e=entry: check_entries(entries, submit_button))
         entries[field] = entry
 
     submit_button = tk.Button(
@@ -104,7 +113,6 @@ def add_data_fields(tab, field_names, validation_functions, status_label):
     )
     submit_button.pack(pady=10)
 
-    # initial check to set the state of submit button
     check_entries(entries, submit_button)
 
     return entries
@@ -123,9 +131,10 @@ def add_faculty_fields(tab, field_names, validation_functions, status_label):
             # Dropdown for Rank selection
             rank_var = tk.StringVar()
             rank_options = ["full", "associate", "assistant", "adjunct"]
-            rank_dropdown = ttk.Combobox(
-                frame, textvariable=rank_var, values=rank_options, state="readonly"
-            )
+            rank_dropdown = ttk.Combobox(frame,
+                                         textvariable=rank_var,
+                                         values=rank_options,
+                                         state="readonly")
             rank_dropdown.set(rank_options[0])  # Set default value
             rank_dropdown.pack(side="right", expand=True, fill="x")
             entries[field] = rank_dropdown
@@ -173,9 +182,8 @@ def setup_data_entry_tab(notebook, status_label):
     faculty_tab = ttk.Frame(data_entry_notebook)
     data_entry_notebook.add(faculty_tab, text="Faculty")
     faculty_fields = ["ID", "Name", "Email", "Rank"]
-    add_faculty_fields(
-        faculty_tab, faculty_fields, {"Email": validate_email}, status_label
-    )
+    add_faculty_fields(faculty_tab, faculty_fields, {"Email": validate_email},
+                       status_label)
 
     programs_tab = ttk.Frame(data_entry_notebook)
     data_entry_notebook.add(programs_tab, text="Programs")
@@ -185,9 +193,8 @@ def setup_data_entry_tab(notebook, status_label):
     courses_tab = ttk.Frame(data_entry_notebook)
     data_entry_notebook.add(courses_tab, text="Courses")
     course_fields = ["ID", "Title", "Description", "Department ID"]
-    add_data_fields(
-        courses_tab, course_fields, {"ID": validate_course_id}, status_label
-    )
+    add_data_fields(courses_tab, course_fields, {"ID": validate_course_id},
+                    status_label)
 
     sections_tab = ttk.Frame(data_entry_notebook)
     data_entry_notebook.add(sections_tab, text="Sections")
@@ -198,9 +205,8 @@ def setup_data_entry_tab(notebook, status_label):
         "Instructor ID",
         "Enrollment Count",
     ]
-    add_data_fields(
-        sections_tab, section_fields, {"ID": validate_section_id}, status_label
-    )
+    add_data_fields(sections_tab, section_fields, {"ID": validate_section_id},
+                    status_label)
 
     objectives_tab = ttk.Frame(data_entry_notebook)
     data_entry_notebook.add(objectives_tab, text="Learning Objectives")
