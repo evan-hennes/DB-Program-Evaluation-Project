@@ -43,9 +43,6 @@ def validate_department_name(entry):
 def validate_program_name(entry):
     return entry.get().strip() != ""
 
-def validate_semester(entry):
-    return entry.get().strip() == "Fall" or entry.get().strip() == "Spring"
-
 def validate_year(entry):
     return entry.get().strip() != "" and len(entry.get().strip()) == 5 and entry.get().strip()[0:2].isdigit() and entry.get().strip()[3:5].isdigit() and entry.get().strip()[2] == "-"
 
@@ -60,7 +57,6 @@ validation_functions = {
 
     "Department Name": validate_department_name,
     "Program Name": validate_program_name,
-    "Semester": validate_semester,
     "Year": validate_year,
 }
 
