@@ -12,5 +12,5 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
 
 
 if __name__ == "__main__":
-    db_manager = SessionManager
+    db_manager = SessionManager("sqlite:///university_evaluation.db")
     initialize_gui(db_manager)
