@@ -40,11 +40,6 @@ def validate_enrollment_count(entry):
     return entry.get().strip().isdigit()
 
 
-def validate_semester(entry):
-    return entry.get().strip().isalpha() and len(
-        entry.get().strip().split()) == 2
-
-
 validation_functions = {
     "Code": validate_department_code,
     "Email": validate_email,
@@ -52,7 +47,6 @@ validation_functions = {
     "Department ID": validate_department_id,
     "Person in Charge ID": validate_person_in_charge_id,
     "Enrollment Count": validate_enrollment_count,
-    "Semester": validate_semester,
 }
 
 
@@ -68,6 +62,7 @@ def check_entries(entries, submit_button):
     for field, entry in entries.items():
         is_valid = validate_non_empty(entry) and validation_functions.get(
             field, lambda e: True)(entry)
+        print(entry, is_valid)
         set_entry_validity(entry, is_valid)
         all_valid &= is_valid
     submit_button.config(state="normal" if all_valid else "disabled")
