@@ -53,7 +53,7 @@ def validate_year(entry):
 validation_functions = {
     "Code": validate_department_code,
     "Email": validate_email,
-    "ID": validate_course_id,  # Assuming this is for course ID
+    "Course ID": validate_course_id,  # Assuming this is for course ID
     "Department ID": validate_department_id,
     "Person in Charge ID": validate_person_in_charge_id,
     "Enrollment Count": validate_enrollment_count,
@@ -90,8 +90,8 @@ def handle_data_submission(entries, status_label, category):
             if category == "Departments":
                 DB_MANAGER.add_department(data["Name"], data["Code"])
             elif category == "Faculty":
-                DB_MANAGER.add_faculty(data["ID"], data["Name"], data["Email"],
-                                       data["Rank"])
+                DB_MANAGER.add_faculty(data["Name"], data["Email"],
+                                       data["Rank"], data["Department ID"])
             elif category == "Programs":
                 DB_MANAGER.add_program(data["Name"], data["Department ID"],
                                        data["Person in Charge ID"])
@@ -135,13 +135,14 @@ def add_data_fields(tab, field_names, validation_functions, status_label,
 
     return entries
 
-def handle_query_sbmission(entries, status_label, category):
+def handle_query_submission(entries, status_label, category):
     is_valid = all(validate_non_empty(entry) for entry in entries.values())
     if is_valid:
         data = {field: entry.get() for field, entry in entries.items()}
         try:
+            results = ""
             if category == "Department":
-                print("do stuff")
+                results = DB_MANAGER.get_department_programs_by_name(data["Department Name"])
             elif category == "Program":
                 print("do stuff")
             elif category == "SemesterProgram":
@@ -149,7 +150,7 @@ def handle_query_sbmission(entries, status_label, category):
             elif category == "Year":
                 print("do stuff")
             status_label.config(
-                text=f"Query for {category} successfully submitted.",
+                text=f"Query for {category} successfully submitted.\n{results}",
                 fg="green")
         except Exception as e:
             status_label.config(text=str(e), fg="red")
@@ -242,7 +243,7 @@ def setup_data_entry_tab(notebook, status_label):
 
     faculty_tab = ttk.Frame(data_entry_notebook)
     data_entry_notebook.add(faculty_tab, text="Faculty")
-    faculty_fields = ["ID", "Name", "Email", "Rank"]
+    faculty_fields = ["Name", "Email", "Rank", "Department ID"]
     add_faculty_fields(faculty_tab, faculty_fields, {"Email": validate_email},
                        status_label)
 
@@ -310,13 +311,17 @@ def reset_database():
     Base.metadata.drop_all(engine)
 
     Base.metadata.create_all(engine)
-    messagebox.showinfo("Database Reset",
-                        "Database has been reset/initialized.")
+    # messagebox.showinfo("Database Reset",
+    #                     "Database has been reset/initialized.")
 
 
 def initialize_gui(db_manager):
     global DB_MANAGER
     DB_MANAGER =  db_manager
+
+    DB_MANAGER.add_department("dep", 1234)
+    DB_MANAGER.add_faculty("fac", "@.", "full", 1)
+    DB_MANAGER.add_program("pro", 1, 1)
     
     window = tk.Tk()
     window.title("University Program Evaluation System")
