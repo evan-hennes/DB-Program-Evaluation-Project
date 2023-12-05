@@ -128,6 +128,9 @@ ENV/
 env.bak/
 venv.bak/
 
+# Database
+university_evaluation.db
+
 # Spyder project settings
 .spyderproject
 .spyproject

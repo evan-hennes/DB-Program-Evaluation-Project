@@ -1,7 +1,7 @@
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from db import SessionManager
-from gui import initialize_gui
+from gui import initialize_gui, reset_database
 
 
 @event.listens_for(Engine, "connect")
@@ -14,3 +14,5 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
 if __name__ == "__main__":
     db_manager = SessionManager("sqlite:///university_evaluation.db")
     initialize_gui(db_manager)
+    initialize_db(db_manager)
+    reset_database()

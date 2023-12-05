@@ -3,7 +3,7 @@ from tkinter import ttk, messagebox
 from sqlalchemy import create_engine
 from db import Base
 
-DB_MANAGER = None
+DB = None
 
 # Validation functions
 def validate_non_empty(entry):
@@ -19,7 +19,7 @@ def validate_email(entry):
 
 
 def validate_course_id(entry):
-    return entry.get().strip().isalnum() and len(entry.get().strip()) == 7
+    return entry.get().strip().isdigit() and len(entry.get().strip()) == 4
 
 
 def validate_section_id(entry):
@@ -50,7 +50,7 @@ def validate_year(entry):
 validation_functions = {
     "Code": validate_department_code,
     "Email": validate_email,
-    "ID": validate_course_id,  # Assuming this is for course ID
+    "Course ID": validate_course_id,  # Assuming this is for course ID
     "Department ID": validate_department_id,
     "Person in Charge ID": validate_person_in_charge_id,
     "Enrollment Count": validate_enrollment_count,
@@ -84,12 +84,12 @@ def handle_data_submission(entries, status_label, category):
         data = {field: entry.get() for field, entry in entries.items()}
         try:
             if category == "Departments":
-                DB_MANAGER.add_department(data["Name"], data["Code"])
+                DB.add_department(data["Name"], data["Code"])
             elif category == "Faculty":
-                DB_MANAGER.add_faculty(data["ID"], data["Name"], data["Email"],
-                                       data["Rank"])
+                DB.add_faculty(data["Name"], data["Email"],
+                                       data["Rank"], data["Department ID"])
             elif category == "Programs":
-                DB_MANAGER.add_program(data["Name"], data["Department ID"],
+                DB.add_program(data["Name"], data["Department ID"],
                                        data["Person in Charge ID"])
             # Add similar branches for other categories
             status_label.config(
@@ -136,16 +136,27 @@ def handle_query_submission(entries, status_label, category):
     if is_valid:
         data = {field: entry.get() for field, entry in entries.items()}
         try:
+            results = ""
+
             if category == "Department":
-                print("do stuff")
+                if data["Choice"] == "faculty":
+                    results = DB.get_department_faculty_by_name(data["Department Name"])
+                elif data["Choice"] == "program":
+                    results = DB.get_department_programs_by_name(data["Department Name"])
             elif category == "Program":
-                print("do stuff")
-            elif category == "SemesterProgram":
-                Dprint("do stuff")
+                if data["Choice"] == "courses":
+                    results = DB.get_program_courses_by_name(data["Program Name"])
+                elif data["Choice"] == "objectives":
+                    results = DB.get_program_objectives_by_name(data["Program Name"])
+            elif category == "Semester Program":
+                if data["Choice"] == "evaluation":
+                    results = DB.get_results_by_semester(data["Semester"], data["Program Name"])
             elif category == "Year":
-                print("do stuff")
+                if data["Choice"] == "evaluation":
+                    results = DB.get_results_by_year(data["Year"])
+
             status_label.config(
-                text=f"Query for {category} successfully submitted.",
+                text=f"Query for {category} successfully submitted.\n{results}",
                 fg="green")
         except Exception as e:
             status_label.config(text=str(e), fg="red")
@@ -162,12 +173,31 @@ def add_query_fields(tab, field_names, validation_functions, status_label,
         label = tk.Label(frame, text=field, width=20)
         label.pack(side="left")
 
-        entry = tk.Entry(frame)
-        entry.pack(side="right", expand=True, fill="x")
-        entry.bind(
-            "<KeyRelease>",
-            lambda event, e=entry: check_entries(entries, submit_button))
-        entries[field] = entry
+        if field == "Choice":
+            choice_var = tk.StringVar()
+            choice_options = ["default"]
+            if category == "Department":
+                choice_options = ["faculty", "program"]
+            elif category == "Program":
+                choice_options = ["courses", "objectives"]
+            elif category == "Semester Program":
+                choice_options = ["evaluation"]
+            elif category == "Year":
+                choice_options = ["evaluation"]
+            choice_dropdown = ttk.Combobox(frame,
+                textvariable=choice_var,
+                values=choice_options,
+                state="readonly")
+            choice_dropdown.set(choice_options[0])
+            choice_dropdown.pack(side="right", expand=True, fill="x")
+            entries[field] = choice_dropdown
+        else:
+            entry = tk.Entry(frame)
+            entry.pack(side="right", expand=True, fill="x")
+            entry.bind(
+                "<KeyRelease>",
+                lambda event, e=entry: check_entries(entries, submit_button))
+            entries[field] = entry
 
     submit_button = tk.Button(
         tab,
@@ -238,7 +268,7 @@ def setup_data_entry_tab(notebook, status_label):
 
     faculty_tab = ttk.Frame(data_entry_notebook)
     data_entry_notebook.add(faculty_tab, text="Faculty")
-    faculty_fields = ["ID", "Name", "Email", "Rank"]
+    faculty_fields = ["Name", "Email", "Rank", "Department ID"]
     add_faculty_fields(faculty_tab, faculty_fields, {"Email": validate_email},
                        status_label)
 
@@ -277,25 +307,25 @@ def setup_data_query_tab(notebook, status_label):
     # Department Queries
     department_tab = ttk.Frame(data_query_notebook)
     data_query_notebook.add(department_tab, text="Department")
-    department_fields = ["Department Name"]
+    department_fields = ["Choice", "Department Name"]
     add_query_fields(department_tab, department_fields, {"Department Name": validate_department_name}, status_label, "Department")
 
     # Program Queries
     program_tab = ttk.Frame(data_query_notebook)
     data_query_notebook.add(program_tab, text="Program")
-    program_fields = ["Program Name"]
+    program_fields = ["Choice", "Program Name"]
     add_query_fields(program_tab, program_fields, {"Program Name": validate_program_name}, status_label, "Program")
 
     # Semester + Program Queries
     semester_program_tab = ttk.Frame(data_query_notebook)
     data_query_notebook.add(semester_program_tab, text="Semester Program")
-    semester_program_fields = ["Semester", "Program Name"]
+    semester_program_fields = ["Choice", "Semester", "Program Name"]
     add_query_fields(semester_program_tab, semester_program_fields, {"Program Name": validate_program_name}, status_label, "Semester Program")
 
     # Year Queries
     year_tab = ttk.Frame(data_query_notebook)
     data_query_notebook.add(year_tab, text="Year")
-    year_fields = ["Year"]
+    year_fields = ["Choice", "Year"]
     add_query_fields(year_tab, year_fields, {"Year": validate_year}, status_label, "Year")
 
 def reset_database():
@@ -306,14 +336,9 @@ def reset_database():
     Base.metadata.drop_all(engine)
 
     Base.metadata.create_all(engine)
-    messagebox.showinfo("Database Reset",
-                        "Database has been reset/initialized.")
 
 
-def initialize_gui(db_manager):
-    global DB_MANAGER
-    DB_MANAGER =  db_manager
-    
+def initialize_gui():
     window = tk.Tk()
     window.title("University Program Evaluation System")
 
@@ -339,3 +364,54 @@ def initialize_gui(db_manager):
     setup_data_query_tab(main_notebook, status_label)
 
     window.mainloop()
+
+def initialize_db(db):
+    global DB
+    DB =  db
+
+    # Department
+    db.add_department("Cox School of Business", "BIZ")
+    db.add_department("Lyle School of Engineering", "ENG")
+
+    # Faculty
+    db.add_faculty("Vishal Ahuja", "vishal.ahuja@smu.edu", "associate", 1)
+    db.add_faculty("Amy Altizer", "amy.altizer@smu.edu", "adjunct", 1)
+    db.add_faculty("Thomas Barry", "thomas.barry@smu.edu", "full", 1)
+    db.add_faculty("Wendy Bradley", "wendy.bradley@smu.edu", "assistant", 1)
+
+    db.add_faculty("Frank Coyle", "frank.coyle@smu.edu", "associate", 2)
+    db.add_faculty("Qiguo Jing", "qiguo.jing@smu.edu", "adjunct", 2)
+    db.add_faculty("Theodore Manikas", "theodore.manikas@smu.edu", "full", 2)
+    db.add_faculty("Corey Clark", "corey.clark@smu.edu", "assistant", 2)
+
+    # Program
+    db.add_program("Finance", 1, 3)
+    db.add_program("Accounting", 1, 3)
+    db.add_program("Marketing", 1, 3)
+
+    db.add_program("Computer Science", 2, 7)
+    db.add_program("Computer Engineering", 2, 7)
+    db.add_program("Creative Computing", 2, 7)
+
+    # Course
+    db.add_course("BIZ1000", "Intro to Business", "Introduction to all things Business", 1)
+    db.add_course("BIZ1100", "Intro to Marketing", "Introduction to all things Marketing", 1)
+    db.add_course("BIZ1200", "Intro to Accounting", "Introduction to all things Accounting", 1)
+    db.add_course("BIZ2000", "Intermediate Business", "Intermediate class for all things Business", 1)
+    db.add_course("BIZ2100", "Intermediate Marketing", "Intermediate class for all things Marketing", 1)
+    db.add_course("BIZ2200", "Intermediate Accounting", "Intermediate class for all things Accounting", 1)
+    db.add_course("BIZ3000", "Advanced Business", "Advanced class for all things Business", 1)
+    db.add_course("BIZ3100", "Advanced Marketing", "Advanced class for all things Marketing", 1)
+    db.add_course("BIZ3200", "Advanced Accounting", "Advanced class for all things Accounting", 1)
+
+    db.add_course("ENG1000", "Intro to Computer Science", "Introduction to all things Computer Science", 2)
+    db.add_course("ENG1100", "Intro to Computer Engineering", "Introduction to all things Computer Engineering", 2)
+    db.add_course("ENG1200", "Intro to Creative Computing", "Introduction to all things Creative Computing", 2)
+    db.add_course("ENG2000", "Intermediate Computer Science", "Intermediate class for all things Computer Science", 2)
+    db.add_course("ENG2100", "Intermediate Computer Engineering", "Intermediate class for all things Computer Engineering", 2)
+    db.add_course("ENG2200", "Intermediate Creative Computing", "Intermediate class for all things Creative Computing", 2)
+    db.add_course("ENG3000", "Advanced Computer Science", "Advanced class for all things Computer Science", 2)
+    db.add_course("ENG3100", "Advanced Computer Engineering", "Advanced class for all things Computer Engineering", 2)
+    db.add_course("ENG3200", "Advanced Creative Computing", "Advanced class for all things Creative Computing", 2)
+
+    # Section
