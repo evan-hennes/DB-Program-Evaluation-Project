@@ -1,10 +1,9 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from sqlalchemy import create_engine
-from db import Base, SessionManager
+from db import Base
 
-db_manager = SessionManager("sqlite:///university_evaluation.db")
-
+DB_MANAGER = None
 
 # Validation functions
 def validate_non_empty(entry):
@@ -36,7 +35,6 @@ def validate_person_in_charge_id(entry):
 
 
 def validate_enrollment_count(entry):
-    print(entry.get().strip().isdigit())
     return entry.get().strip().isdigit()
 
 
@@ -62,7 +60,6 @@ def check_entries(entries, submit_button):
     for field, entry in entries.items():
         is_valid = validate_non_empty(entry) and validation_functions.get(
             field, lambda e: True)(entry)
-        print(entry, is_valid)
         set_entry_validity(entry, is_valid)
         all_valid &= is_valid
     submit_button.config(state="normal" if all_valid else "disabled")
@@ -74,12 +71,12 @@ def handle_data_submission(entries, status_label, category):
         data = {field: entry.get() for field, entry in entries.items()}
         try:
             if category == "Departments":
-                db_manager.add_department(data["Name"], data["Code"])
+                DB_MANAGER.add_department(data["Name"], data["Code"])
             elif category == "Faculty":
-                db_manager.add_faculty(data["ID"], data["Name"], data["Email"],
+                DB_MANAGER.add_faculty(data["ID"], data["Name"], data["Email"],
                                        data["Rank"])
             elif category == "Programs":
-                db_manager.add_program(data["Name"], data["Department ID"],
+                DB_MANAGER.add_program(data["Name"], data["Department ID"],
                                        data["Person in Charge ID"])
             # Add similar branches for other categories
             status_label.config(
@@ -219,7 +216,10 @@ def reset_database():
                         "Database has been reset/initialized.")
 
 
-def initialize_gui():
+def initialize_gui(db_manager):
+    global DB_MANAGER
+    DB_MANAGER =  db_manager
+    
     window = tk.Tk()
     window.title("University Program Evaluation System")
 
