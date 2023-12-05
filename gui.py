@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from sqlalchemy import create_engine
 from db import Base
+from random import random
 
 DB = None
 
@@ -415,3 +416,40 @@ def initialize_db(db):
     db.add_course("ENG3200", "Advanced Creative Computing", "Advanced class for all things Creative Computing", 2)
 
     # Section
+    semester = ["Fall", "Spring", "Summer"]
+    for i in range(0, 51, 10):
+        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "BIZ1000", int(random() * 4) + 1, int(random() * 50))
+    for i in range(0, 51, 10):
+        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "BIZ1100", int(random() * 4) + 1, int(random() * 50))
+    for i in range(0, 51, 10):
+        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "BIZ1200", int(random() * 4) + 1, int(random() * 50))
+    for i in range(0, 51, 10):
+        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "BIZ2000", int(random() * 4) + 1, int(random() * 50))
+    for i in range(0, 51, 10):
+        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "BIZ2100", int(random() * 4) + 1, int(random() * 50))
+    for i in range(0, 51, 10):
+        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "BIZ2200", int(random() * 4) + 1, int(random() * 50))
+    for i in range(0, 51, 10):
+        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "BIZ3000", int(random() * 4) + 1, int(random() * 50))
+    for i in range(0, 51, 10):
+        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "BIZ3100", int(random() * 4) + 1, int(random() * 50))
+    for i in range(0, 51, 10):
+        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "BIZ3200", int(random() * 4) + 1, int(random() * 50))
+    for i in range(0, 51, 10):
+        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "ENG1000", int(random() * 4) + 5, int(random() * 50))
+    for i in range(0, 51, 10):
+        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "ENG1100", int(random() * 4) + 5, int(random() * 50))
+    for i in range(0, 51, 10):
+        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "ENG1200", int(random() * 4) + 5, int(random() * 50))
+    for i in range(0, 51, 10):
+        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "ENG2000", int(random() * 4) + 5, int(random() * 50))
+    for i in range(0, 51, 10):
+        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "ENG2100", int(random() * 4) + 5, int(random() * 50))
+    for i in range(0, 51, 10):
+        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "ENG2200", int(random() * 4) + 5, int(random() * 50))
+    for i in range(0, 51, 10):
+        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "ENG3000", int(random() * 4) + 5, int(random() * 50))
+    for i in range(0, 51, 10):
+        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "ENG3100", int(random() * 4) + 5, int(random() * 50))
+    for i in range(0, 51, 10):
+        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "ENG3200", int(random() * 4) + 5, int(random() * 50))

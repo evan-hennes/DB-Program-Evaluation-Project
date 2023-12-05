@@ -117,10 +117,9 @@ class SessionManager:
         self.session.add(new_course)
         self.session.commit()
 
-    def add_section(self, id, number, semester, course_id, instructor_id,
+    def add_section(self, number, semester, course_id, instructor_id,
                     enrollment_count):
         new_section = Section(
-            id=id,
             number=number,
             semester=semester,
             course_id=course_id,
