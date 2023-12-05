@@ -142,7 +142,7 @@ def handle_query_submission(entries, status_label, category):
         try:
             results = ""
             if category == "Department":
-                results = DB_MANAGER.get_department_programs_by_name(data["Department Name"])
+                results = DB_MANAGER.get_department_faculty_by_name(data["Department Name"])
             elif category == "Program":
                 print("do stuff")
             elif category == "SemesterProgram":
@@ -320,8 +320,14 @@ def initialize_gui(db_manager):
     DB_MANAGER =  db_manager
 
     DB_MANAGER.add_department("dep", 1234)
-    DB_MANAGER.add_faculty("fac", "@.", "full", 1)
-    DB_MANAGER.add_program("pro", 1, 1)
+    DB_MANAGER.add_faculty("one", "@.one", "full", 1)
+    DB_MANAGER.add_faculty("two", "@.two", "full", 1)
+    DB_MANAGER.add_faculty("three", "@.three", "full", 1)
+    DB_MANAGER.add_faculty("four", "@.four", "full", 1)
+    DB_MANAGER.add_program("p-one", 1, 1)
+    DB_MANAGER.add_program("p-two", 1, 1)
+    DB_MANAGER.add_program("p-three", 1, 2)
+    DB_MANAGER.add_program("p-four", 1, 3)
     
     window = tk.Tk()
     window.title("University Program Evaluation System")

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Text, create_engine, select, inspect
+from sqlalchemy import Column, Integer, String, ForeignKey, Text, create_engine, select, inspect, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker, selectinload
 from sqlalchemy.sql import Select
@@ -160,101 +160,39 @@ class SessionManager:
         )
         self.session.add(new_evaluation)
         self.session.commit()
-    
-    # def query(self, query):
-    #     # Get column names from the query
-    #     columns = []
-    #     if isinstance(query, Select):
-    #         columns = [col.name for col in query.selected_columns]
-
-    #     # Execute the query
-    #     results = self.session.execute(query)
-    #     string = '\n'.join([','.join([str(getattr(row[0], col)) for col in columns]) for row in results])
-
-    #     return [results, string]
-
-    # def query(self, query):
-    #     # Execute the query
-    #     result = self.session.execute(query)
-
-    #     # Check if it's a Select statement
-    #     if isinstance(query, Select):
-    #         # Get column names from the Select statement
-    #         columns = [col.name for col in query.columns]
-
-    #         # Convert rows to string
-    #         results_str = '\n'.join([','.join([str(getattr(row[0], col)) for col in columns]) for row in result])
-
-    #         return [result, results_str]
-
-    #     else:
-    #         # For non-select queries, return the raw result and an empty string
-    #         return [result, ""]
 
     def query(self, query):
-        # Execute the query
-        result = self.session.execute(query)
-
-        # Check if it's a Select statement
-        if isinstance(query, Select):
-            # Convert rows to string, including related objects
-            results_str = '\n'.join([self.convert_row_to_string(row) for row in result.scalars().all()])
-            return [result, results_str]
-
-        else:
-            # For non-select queries, return the raw result and an empty string
-            return [result, ""]
-
-    # Takes a DB object and converts it to a string
-    def convert_row_to_string(self, row):
-        row_str = '\n'.join([f"{col.name}: {getattr(row, col.name)}" for col in row.__table__.columns])
-
-        # Handle related objects
-        for relation in row.__mapper__.relationships.keys():
-            related_objects = getattr(row, relation)
-            related_str = '\n'.join([','.join([str(getattr(relation, col.name)) for col in relation.__table__.columns]) for relation in related_objects])
-            row_str += f"\n{relation}: [{related_str}]"
-
-        return row_str
+        return [[attr for attr in row] for row in self.session.execute(text(query))]
     
     # List all of its programs
     def get_department_programs_by_id(self, department_id):
-        [results, string] = self.query(select(Department).where(Department.id == department_id).options(selectinload(Department.programs)))
-        return string
+        return self.query(f"SELECT p.name FROM departments AS d JOIN programs AS p ON d.id = p.department_id WHERE d.id = {department_id}")
     def get_department_programs_by_name(self, department_name):
-        [results, string] = self.query(select(Department).where(Department.name == department_name).options(selectinload(Department.programs)))
-        return string
+        return self.query(f"SELECT p.name FROM departments AS d JOIN programs AS p ON d.id = p.department_id WHERE d.name = '{department_name}'")
 
     # List all of its faculty (including what program each faculty is in charge of, if there is one)
     def get_department_faculty_by_id(self, department_id):
-        [results, string] = self.query(select(Department).where(Department.id == department_id).options(selectinload(Department.faculty)))
-        return string
+        return self.query(f"SELECT f.name, p.name FROM departments AS d JOIN faculty AS f ON d.id = f.department_id LEFT JOIN programs AS p ON f.id = p.in_charge_id WHERE d.id = {department_id}")
     def get_department_faculty_by_name(self, department_name):
-        [results, string] = self.query(select(Department).where(Department.name == department_name).options(selectinload(Department.faculty)))
-        return string
+        return self.query(f"SELECT f.name, p.name FROM departments AS d JOIN faculty AS f ON d.id = f.department_id LEFT JOIN programs AS p ON f.id = p.in_charge_id WHERE d.name = '{department_name}'")
 
     # List all the courses, together with the objectives/sub-objectives association with year
     def get_program_courses_by_id(self, program_id):
-        [results, string] = self.query(select(Program).where(Program.id == program_id))
-        return string
+        return self.query(f"SELECT * FROM courses")
     def get_program_courses_by_name(self, program_name):
-        [results, string] = self.query(select(Program).where(Program.name == program_name))
-        return string
+        return self.query(f"SELECT * FROM courses")
     
     # List all of the objectives
     def get_program_objectives_by_id(self, program_id):
-        [results, string] = self.query(select(Program).where(Program.id == program_id))
-        return string
+        return self.query(f"SELECT * FROM programs")
     def get_program_objectives_by_name(self, program_name):
-        [results, string] = self.query(select(Program).where(Program.name == program_name))
-        return string
+        return self.query(f"SELECT * FROM programs")
 
     # List all of the evaluation results for each objective/sub-objective (If data for some sections has not been entered, indicate that information is not found)
     def get_results_by_semester(self, semester, program_id):
-        [results, string] = self.query(select(ProgramCourses).where(ProgramCourses.program_id == program_id))
-        return string
+        return self.query(f"SELECT * FROM sections")
 
     # List all of the evaluation results for each objective/sub-objective
     # Show course/section involved in evaluation, list result for each course/section, and aggregate the result to show the number (and percentage) of student
     def get_results_by_year(self, year):
-        print("hey")
+        return self.query(f"SELECT * FROM course_objectives")
