@@ -290,7 +290,7 @@ def setup_data_query_tab(notebook, status_label):
     semester_program_tab = ttk.Frame(data_query_notebook)
     data_query_notebook.add(semester_program_tab, text="Semester Program")
     semester_program_fields = ["Semester", "Program Name"]
-    add_query_fields(semester_program_tab, semester_program_fields, {"Semester": validate_semester, "Program Name": validate_program_name}, status_label, "Semester Program")
+    add_query_fields(semester_program_tab, semester_program_fields, {"Program Name": validate_program_name}, status_label, "Semester Program")
 
     # Year Queries
     year_tab = ttk.Frame(data_query_notebook)
