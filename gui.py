@@ -203,6 +203,10 @@ def setup_data_entry_tab(notebook, status_label):
     add_data_fields(objectives_tab, objective_fields, {}, status_label,
                     "Learning Objectives")
 
+def setup_data_query_tab(notebook, status_label):
+    data_query_tab = ttk.Frame(notebook)
+    notebook.add(data_query_tab, text="Data Query")
+
 
 def reset_database():
     DATABASE_URI = "sqlite:///university_evaluation.db"
@@ -241,8 +245,7 @@ def initialize_gui(db_manager):
     # Setup Data Entry Tab
     setup_data_entry_tab(main_notebook, status_label)
 
-    # Placeholder for Data Query Tab (do that later)
-    data_query_tab = ttk.Frame(main_notebook)
-    main_notebook.add(data_query_tab, text="Data Query")
+    # Setup Data Query Tab
+    setup_data_query_tab(main_notebook, status_label)
 
     window.mainloop()
