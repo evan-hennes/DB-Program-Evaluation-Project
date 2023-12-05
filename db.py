@@ -41,7 +41,6 @@ class Course(Base):
     department_id = Column(Integer, ForeignKey("departments.id"))
     sections = relationship("Section", backref="course")
 
-
 class Section(Base):
     __tablename__ = "sections"
     id = Column(Integer, primary_key=True)
@@ -190,7 +189,7 @@ class SessionManager:
 
     # List all of the evaluation results for each objective/sub-objective (If data for some sections has not been entered, indicate that information is not found)
     def get_results_by_semester(self, semester, program_id):
-        return self.query(f"SELECT * FROM sections")
+        return self.query(f"SELECT s.name, s.enrollment_count, se.evaluation_method, se.students_met FROM programs AS p JOIN program_courses AS pc ON p.id = pc.program_id JOIN courses AS c ON pc.course_id = c.id JOIN sections AS s ON c.id = s.course_id LEFT JOIN section_evaluations AS se ON s.id = se.section_id WHERE s.semester = '{semester}' AND p.program_id = {program_id}")
 
     # List all of the evaluation results for each objective/sub-objective
     # Show course/section involved in evaluation, list result for each course/section, and aggregate the result to show the number (and percentage) of student

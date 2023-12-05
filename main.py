@@ -13,5 +13,6 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
 
 if __name__ == "__main__":
     db_manager = SessionManager("sqlite:///university_evaluation.db")
-    reset_database()
     initialize_gui(db_manager)
+    initialize_db(db_manager)
+    reset_database()
