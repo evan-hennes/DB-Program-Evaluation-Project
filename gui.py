@@ -135,7 +135,7 @@ def add_data_fields(tab, field_names, validation_functions, status_label,
 
     return entries
 
-def handle_query_sbmission(entries, status_label, category):
+def handle_query_submission(entries, status_label, category):
     is_valid = all(validate_non_empty(entry) for entry in entries.values())
     if is_valid:
         data = {field: entry.get() for field, entry in entries.items()}
