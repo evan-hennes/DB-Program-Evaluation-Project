@@ -178,15 +178,15 @@ class SessionManager:
 
     # List all the courses, together with the objectives/sub-objectives association with year
     def get_program_courses_by_id(self, program_id):
-        return self.query(f"SELECT * FROM courses")
+        return self.query(f"SELECT c.name, lo1.description, lo2.description FROM programs AS p JOIN program_courses AS pc ON p.id = pc.program_id JOIN courses AS c ON pc.course_id = c.id JOIN course_objectives AS co ON c.id = co.course_id JOIN learning_objectives AS lo1 ON co.objective_id = lo1.id JOIN learning_objectives AS lo2 ON lo2.parent_id = lo1.id WHERE p.id = {program_id}")
     def get_program_courses_by_name(self, program_name):
-        return self.query(f"SELECT * FROM courses")
+        return self.query(f"SELECT c.name, lo1.description, lo2.description FROM programs AS p JOIN program_courses AS pc ON p.id = pc.program_id JOIN courses AS c ON pc.course_id = c.id JOIN course_objectives AS co ON c.id = co.course_id JOIN learning_objectives AS lo1 ON co.objective_id = lo1.id JOIN learning_objectives AS lo2 ON lo2.parent_id = lo1.id WHERE p.name = '{program_name}'")
     
     # List all of the objectives
     def get_program_objectives_by_id(self, program_id):
-        return self.query(f"SELECT * FROM programs")
+        return self.query(f"SELECT DISTINCT lo.description FROM programs AS p JOIN program_courses AS pc ON p.id = pc.program_id JOIN courses AS c ON pc.course_id = c.id JOIN course_objectives AS co ON c.id = co.course_id JOIN learning_objectives AS lo ON co.objective_id = lo.id WHERE p.id = {program_id}")
     def get_program_objectives_by_name(self, program_name):
-        return self.query(f"SELECT * FROM programs")
+        return self.query(f"SELECT DISTINCT lo.description FROM programs AS p JOIN program_courses AS pc ON p.id = pc.program_id JOIN courses AS c ON pc.course_id = c.id JOIN course_objectives AS co ON c.id = co.course_id JOIN learning_objectives AS lo ON co.objective_id = lo.id WHERE p.name = '{program_name}'")
 
     # List all of the evaluation results for each objective/sub-objective (If data for some sections has not been entered, indicate that information is not found)
     def get_results_by_semester(self, semester, program_id):
