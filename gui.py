@@ -37,6 +37,18 @@ def validate_person_in_charge_id(entry):
 def validate_enrollment_count(entry):
     return entry.get().strip().isdigit()
 
+def validate_department_name(entry):
+    return entry.get().strip() != ""
+
+def validate_program_name(entry):
+    return entry.get().strip() != ""
+
+def validate_semester(entry):
+    return entry.get().strip() == "Fall" or entry.get().strip() == "Spring"
+
+def validate_year(entry):
+    return entry.get().strip() != "" and len(entry.get().strip()) == 5 and entry.get().strip()[0:2].isdigit() and entry.get().strip()[3:5].isdigit() and entry.get().strip()[2] == "-"
+
 
 validation_functions = {
     "Code": validate_department_code,
@@ -45,6 +57,11 @@ validation_functions = {
     "Department ID": validate_department_id,
     "Person in Charge ID": validate_person_in_charge_id,
     "Enrollment Count": validate_enrollment_count,
+
+    "Department Name": validate_department_name,
+    "Program Name": validate_program_name,
+    "Semester": validate_semester,
+    "Year": validate_year,
 }
 
 
@@ -110,6 +127,57 @@ def add_data_fields(tab, field_names, validation_functions, status_label,
         text="Submit",
         state="disabled",
         command=lambda: handle_data_submission(entries, status_label, category
+                                               ),
+    )
+    submit_button.pack(pady=10)
+
+    check_entries(entries, submit_button)
+
+    return entries
+
+def handle_query_sbmission(entries, status_label, category):
+    is_valid = all(validate_non_empty(entry) for entry in entries.values())
+    if is_valid:
+        data = {field: entry.get() for field, entry in entries.items()}
+        try:
+            if category == "Department":
+                print("do stuff")
+            elif category == "Program":
+                print("do stuff")
+            elif category == "SemesterProgram":
+                Dprint("do stuff")
+            elif category == "Year":
+                print("do stuff")
+            status_label.config(
+                text=f"Query for {category} successfully submitted.",
+                fg="green")
+        except Exception as e:
+            status_label.config(text=str(e), fg="red")
+    else:
+        status_label.config(text="Invalid data in some fields.", fg="red")
+
+def add_query_fields(tab, field_names, validation_functions, status_label,
+                    category):
+    entries = {}
+    for field in field_names:
+        frame = tk.Frame(tab)
+        frame.pack(side="top", fill="x", padx=5, pady=5)
+
+        label = tk.Label(frame, text=field, width=20)
+        label.pack(side="left")
+
+        entry = tk.Entry(frame)
+        entry.pack(side="right", expand=True, fill="x")
+        entry.bind(
+            "<KeyRelease>",
+            lambda event, e=entry: check_entries(entries, submit_button))
+        entries[field] = entry
+
+    submit_button = tk.Button(
+        tab,
+        text="Submit",
+        state="disabled",
+        command=lambda: handle_query_submission(entries, status_label, category
                                                ),
     )
     submit_button.pack(pady=10)
@@ -207,6 +275,32 @@ def setup_data_query_tab(notebook, status_label):
     data_query_tab = ttk.Frame(notebook)
     notebook.add(data_query_tab, text="Data Query")
 
+    data_query_notebook = ttk.Notebook(data_query_tab)
+    data_query_notebook.pack(expand=True, fill="both", padx=10, pady=10)
+
+    # Department Queries
+    department_tab = ttk.Frame(data_query_notebook)
+    data_query_notebook.add(department_tab, text="Department")
+    department_fields = ["Department Name"]
+    add_query_fields(department_tab, department_fields, {"Department Name": validate_department_name}, status_label, "Department")
+
+    # Program Queries
+    program_tab = ttk.Frame(data_query_notebook)
+    data_query_notebook.add(program_tab, text="Program")
+    program_fields = ["Program Name"]
+    add_query_fields(program_tab, program_fields, {"Program Name": validate_program_name}, status_label, "Program")
+
+    # Semester + Program Queries
+    semester_program_tab = ttk.Frame(data_query_notebook)
+    data_query_notebook.add(semester_program_tab, text="Semester Program")
+    semester_program_fields = ["Semester", "Program Name"]
+    add_query_fields(semester_program_tab, semester_program_fields, {"Semester": validate_semester, "Program Name": validate_program_name}, status_label, "Semester Program")
+
+    # Year Queries
+    year_tab = ttk.Frame(data_query_notebook)
+    data_query_notebook.add(year_tab, text="Year")
+    year_fields = ["Year"]
+    add_query_fields(year_tab, year_fields, {"Year": validate_year}, status_label, "Year")
 
 def reset_database():
     DATABASE_URI = "sqlite:///university_evaluation.db"
