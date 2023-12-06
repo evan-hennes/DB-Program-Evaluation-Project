@@ -235,5 +235,16 @@ class SessionManager:
     # List all of the evaluation results for each objective/sub-objective
     # Show course/section involved in evaluation, list result for each course/section, and aggregate the result to show the number (and percentage) of student
     def get_results_by_year(self, year):
-        return self.query(f'SELECT * '
-                          f'FROM course_objectives ') # todo
+        year = year.split('-')
+        return self.query(f'SELECT c.title, s.number, se.evaluation_method, se.students_met '
+                          f'FROM courses AS c '
+                          f'JOIN sections AS s '
+                          f'ON c.id = s.course_id '
+                          f'JOIN section_evaluations AS se '
+                          f'ON s.id = se.section_id '
+                          f'WHERE (s.year = {year[0]} '
+                          f'AND s.semester = \'Summer\') '
+                          f'OR (s.year = {year[0]} '
+                          f'AND s.semester = \'Fall\')'
+                          f'OR (s.year = {year[1]} '
+                          f'AND s.semester = \'Spring\') ')
