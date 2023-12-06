@@ -544,19 +544,29 @@ def initialize_db(db):
     db.add_faculty("Corey Clark", "corey.clark@smu.edu", "assistant", 2)
 
     # Program
-    db.add_program("Finance", 1, 3)
-    db.add_program("Accounting", 1, 3)
-    db.add_program("Marketing", 1, 3)
+    db.add_program("Finance", 1, 3) # 1
+    db.add_program("Accounting", 1, 3) # 2
+    db.add_program("Marketing", 1, 3) # 3
 
-    db.add_program("Computer Science", 2, 7)
-    db.add_program("Computer Engineering", 2, 7)
-    db.add_program("Creative Computing", 2, 7)
+    db.add_program("Computer Science", 2, 7) # 4
+    db.add_program("Computer Engineering", 2, 7) # 5
+    db.add_program("Creative Computing", 2, 7) # 6
 
     # Course
     db.add_course("BIZ1000", "Intro to Business",
                   "Introduction to all things Business", 1)
+    db.add_learning_objective(1, "learn le business")
+    db.add_learning_objective(2, "how sell stuff and things", 1)
+    db.assign_course_to_program(1, "BIZ1000")
+    db.assign_objective_to_course("BIZ1000", 1)
+    db.assign_objective_to_course("BIZ1000", 2)
     db.add_course("BIZ1100", "Intro to Marketing",
                   "Introduction to all things Marketing", 1)
+    db.add_learning_objective(3, "learn le marketing")
+    db.add_learning_objective(4, "i mark it", 3)
+    db.assign_course_to_program(3, "BIZ1100")
+    db.assign_objective_to_course("BIZ1100", 3)
+    db.assign_objective_to_course("BIZ1100", 4)
     db.add_course("BIZ1200", "Intro to Accounting",
                   "Introduction to all things Accounting", 1)
     db.add_course("BIZ2000", "Intermediate Business",
