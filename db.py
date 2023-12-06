@@ -183,21 +183,18 @@ class SessionManager:
                           f'WHERE d.name = \'{department_name}\'')
 
 # List all the courses, together with the objectives/sub-objectives association with year
-# still need to figure out how to get sub-objectives/how sub objectives work
     def get_program_courses_by_name(self, program_name):
         return self.query(f'SELECT c.title, lo.description '
                           f'FROM courses AS c '
-                          f'JOIN course_objectives AS co '
-                          f'ON c.id = co.course_id '
-                          f'JOIN learning_objectives AS lo '
-                          f'ON lo.id = co.objective_id '
-                          f'WHERE c.id IN ( '
-                          f'SELECT pc.course_id '
-                          f'FROM programs AS p '
                           f'JOIN program_courses AS pc '
+                          f'ON c.id = pc.course_id '
+                          f'JOIN programs AS p '
                           f'ON p.id = pc.program_id '
-                          f'WHERE p.name = \'{program_name}\' '
-                          f')')
+                          f'JOIN course_objectives AS co '
+                          f'ON co.course_id = c.id '
+                          f'JOIN learning_objectives AS lo '
+                          f'ON co.objective_id = lo.id '
+                          f'WHERE p.name = \'{program_name}\'')
     
     # List all of the objectives
     def get_program_objectives_by_name(self, program_name):
@@ -218,7 +215,7 @@ class SessionManager:
     # List all of the evaluation results for each objective/sub-objective (If data for some sections has not been entered, indicate that information is not found)
     def get_results_by_semester(self, semester, program_name):
         semester = semester.split(' ')
-        return self.query(f'SELECT s.number, se.evaluation_method, se.students_met '
+        return self.query(f'SELECT c.title, s.number, se.evaluation_method, se.students_met '
                           f'FROM sections AS s '
                           f'JOIN section_evaluations AS se '
                           f'ON s.id = se.section_id '
