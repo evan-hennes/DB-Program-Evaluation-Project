@@ -544,8 +544,8 @@ def initialize_db(db):
     db.add_faculty("Corey Clark", "corey.clark@smu.edu", "assistant", 2)
 
     # Program
-    db.add_program("Finance", 1, 3)
-    db.add_program("Accounting", 1, 3)
+    db.add_program("Finance", 1, 3) # 1 or 0?
+    db.add_program("Accounting", 1, 3) # 1
     db.add_program("Marketing", 1, 3)
 
     db.add_program("Computer Science", 2, 7)
