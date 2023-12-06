@@ -593,6 +593,7 @@ def initialize_db(db):
 
     # Section
     semester = ["Fall", "Spring", "Summer"]
+    year = [21, 22, 23, 24, 25]
     for i in range(0, 51, 10):
         db.add_section(
             int(random() * 10) + i, semester[int(random() * 3)], "BIZ1000",

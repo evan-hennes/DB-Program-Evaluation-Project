@@ -46,6 +46,7 @@ class Section(Base):
     id = Column(Integer, primary_key=True)
     number = Column(Integer)
     semester = Column(String)
+    year = Column(Integer)
     course_id = Column(String, ForeignKey("courses.id"))
     instructor_id = Column(Integer, ForeignKey("faculty.id"))
     enrollment_count = Column(Integer)
@@ -117,11 +118,12 @@ class SessionManager:
         self.session.add(new_course)
         self.session.commit()
 
-    def add_section(self, number, semester, course_id, instructor_id,
+    def add_section(self, number, semester, year, course_id, instructor_id,
                     enrollment_count):
         new_section = Section(
             number=number,
             semester=semester,
+            year=year,
             course_id=course_id,
             instructor_id=instructor_id,
             enrollment_count=enrollment_count,
@@ -163,10 +165,6 @@ class SessionManager:
         return [[attr for attr in row] for row in self.session.execute(text(query))]
     
     # List all of its programs
-    # def get_department_programs_by_id(self, department_id):
-    #     return self.query(f'SELECT name '
-    #                       f'FROM programs '
-    #                       f'WHERE department_id = {department_id}')
     def get_department_programs_by_name(self, department_name):
         return self.query(f'SELECT p.name '
                           f'FROM departments AS d '
@@ -175,16 +173,6 @@ class SessionManager:
                           f'WHERE d.name= \'{department_name}\'')
 
     # List all of its faculty (including what program each faculty is in charge of, if there is one)
-    # def get_department_faculty_by_id(self, department_id):
-    #     #return self.query(f"SELECT f.name, p.name FROM departments AS d JOIN faculty AS f ON d.id = f.department_id LEFT JOIN programs AS p ON f.id = p.in_charge_id WHERE d.id = {department_id}")
-    #     return self.query(f'SELECT f.name, p.name '
-    #                       f'FROM departments AS d '
-    #                       f'JOIN faculty AS f '
-    #                       f'ON d.id = d.department_id '
-    #                       f'LEFT JOIN programs AS p '
-    #                       f'ON f.id = p.in_charge_id '
-    #                       f'WHERE d.id = {department_id}')
-
     def get_department_faculty_by_name(self, department_name):
         return self.query(f'SELECT f.name, p.name '
                           f'FROM departments AS d '
@@ -194,25 +182,7 @@ class SessionManager:
                           f'ON f.id = p.in_charge_id '
                           f'WHERE d.name = \'{department_name}\'')
 
-    # List all the courses, together with the objectives/sub-objectives association with year
-    # def get_program_courses_by_id(self, program_id):
-    #     # return self.query(f'SELECT c.title, lo1.description, lo2.description '
-    #     #                   f'FROM programs AS p '
-    #     #                   f'JOIN program_courses AS pc '
-    #     #                   f'ON p.id = pc.program_id '
-    #     #                   f'JOIN courses AS c '
-    #     #                   f'ON pc.course_id = c.id '
-    #     #                   f'JOIN course_objectives AS co '
-    #     #                   f'ON c.id = co.course_id '
-    #     #                   f'JOIN learning_objectives AS lo1 '
-    #     #                   f'ON co.objective_id = lo1.id '
-    #     #                   f'JOIN learning_objectives AS lo2 '
-    #     #                   f'ON lo2.parent_id = lo1.id '
-    #     #                   f'WHERE p.id = {program_id}')
-    #     return self.query(f'SELECT * '
-    #                       f'FROM programs '
-    #                       f'WHERE id = {program_id}')
-
+# List all the courses, together with the objectives/sub-objectives association with year
 # still need to figure out how to get sub-objectives/how sub objectives work
     def get_program_courses_by_name(self, program_name):
         return self.query(f'SELECT c.title, lo.description '
@@ -226,23 +196,10 @@ class SessionManager:
                           f'FROM programs AS p '
                           f'JOIN program_courses AS pc '
                           f'ON p.id = pc.program_id '
-                          f'WHERE p.name = \'{program_name}\''
+                          f'WHERE p.name = \'{program_name}\' '
                           f')')
     
     # List all of the objectives
-    # def get_program_objectives_by_id(self, program_id):
-    #     return self.query(f'SELECT DISTINCT lo.description '
-    #                       f'FROM programs AS p '
-    #                       f'JOIN program_courses AS pc '
-    #                       f'ON p.id = pc.program_id '
-    #                       f'JOIN courses AS c '
-    #                       f'ON pc.course_id = c.id '
-    #                       f'JOIN course_objectives AS co '
-    #                       f'ON c.id = co.course_id '
-    #                       f'JOIN learning_objectives AS lo '
-    #                       f'ON co.objective_id = lo.id '
-    #                       f'WHERE p.id = {program_id}')
-
     def get_program_objectives_by_name(self, program_name):
         return self.query(f'SELECT lo.description '
                           f'FROM courses AS c '
@@ -259,24 +216,36 @@ class SessionManager:
                           f')')
 
     # List all of the evaluation results for each objective/sub-objective (If data for some sections has not been entered, indicate that information is not found)
-    def get_results_by_semester(self, semester, program_id):
-        # return self.query(f'SELECT s.name, s.enrollment_count, se.evaluation_method, se.students_met '
-        #                   f'FROM programs AS p '
-        #                   f'JOIN program_courses AS pc '
-        #                   f'ON p.id = pc.program_id '
-        #                   f'JOIN courses AS c '
-        #                   f'ON pc.course_id = c.id '
-        #                   f'JOIN sections AS s '
-        #                   f'ON c.id = s.course_id '
-        #                   f'LEFT JOIN section_evaluations AS se '
-        #                   f'ON s.id = se.section_id '
-        #                   f'WHERE s.semester = \'{semester}\' '
-        #                   f'AND p.program_id = {program_id}')
-        return self.query(f'SELECT * '
-                          f'FROM programs ') # todo
+    def get_results_by_semester(self, semester, program_name):
+        semester = semester.split(' ')
+        return self.query(f'SELECT s.number, se.evaluation_method, se.students_met '
+                          f'FROM sections AS s '
+                          f'JOIN section_evaluations AS se '
+                          f'ON s.id = se.section_id '
+                          f'JOIN courses AS c '
+                          f'ON s.course_id = c.id '
+                          f'JOIN program_courses AS pc '
+                          f'ON c.id = pc.course_id '
+                          f'JOIN programs AS p '
+                          f'on p.id = pc.program_id '
+                          f'WHERE s.semester = \'{semester[0]}\' ' # semester[0] will contain "Fall" "Spring" etc
+                          f'AND s.year = {semester[1]} ' # semester[1] will contain year (i.e. 23, 24, etc.)
+                          f'AND p.name = \'{program_name}\'')
 
     # List all of the evaluation results for each objective/sub-objective
     # Show course/section involved in evaluation, list result for each course/section, and aggregate the result to show the number (and percentage) of student
     def get_results_by_year(self, year):
-        return self.query(f'SELECT * '
-                          f'FROM course_objectives') # todo
+        year = year.split('-')
+        return self.query(f'SELECT c.title, s.number, se.evaluation_method, se.students_met '
+                          f'FROM courses AS c '
+                          f'JOIN sections AS s '
+                          f'ON c.id = s.course_id '
+                          f'JOIN section_evaluations AS se '
+                          f'ON s.id = se.section_id '
+                          f'WHERE (s.year = {year[0]} '
+                          f'AND s.semester = \'Summer\') '
+                          f'OR (s.year = {year[0]} '
+                          f'AND s.semester = \'Fall\')'
+                          f'OR (s.year = {year[1]} '
+                          f'AND s.semester = \'Spring\') '
+                          f'GROUP BY se.section_id')
