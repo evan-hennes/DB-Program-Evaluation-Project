@@ -164,9 +164,10 @@ class SessionManager:
     
     # List all of its programs
     def get_department_programs_by_id(self, department_id):
-        return self.query(f"SELECT p.name FROM departments AS d JOIN programs AS p ON d.id = p.department_id WHERE d.id = {department_id}")
+        return self.query(f'SELECT name FROM programs WHERE department_id = \'{department_id}\'')
+
     def get_department_programs_by_name(self, department_name):
-        return self.query(f"SELECT p.name FROM departments AS d JOIN programs AS p ON d.id = p.department_id WHERE d.name = '{department_name}'")
+        return self.query(f'SELECT programs.name FROM departments JOIN programs ON departments.id = programs.department_id WHERE departments.name= \'{department_name}\'')
 
     # List all of its faculty (including what program each faculty is in charge of, if there is one)
     def get_department_faculty_by_id(self, department_id):

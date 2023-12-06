@@ -368,7 +368,7 @@ def initialize_gui():
 
 def initialize_db(db):
     global DB
-    DB =  db
+    DB = db
 
     # Department
     db.add_department("Cox School of Business", "BIZ")
@@ -453,3 +453,5 @@ def initialize_db(db):
         db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "ENG3100", int(random() * 4) + 5, int(random() * 50))
     for i in range(0, 51, 10):
         db.add_section(int(random() * 10) + i, semester[int(random() * 3)], "ENG3200", int(random() * 4) + 5, int(random() * 50))
+
+    print('db initialized successfully')
