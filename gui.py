@@ -6,6 +6,7 @@ from random import random
 
 DB = None
 
+
 # Validation functions
 def validate_non_empty(entry):
     return entry.get().strip() != ""
@@ -38,14 +39,19 @@ def validate_person_in_charge_id(entry):
 def validate_enrollment_count(entry):
     return entry.get().strip().isdigit()
 
+
 def validate_department_name(entry):
     return entry.get().strip() != ""
+
 
 def validate_program_name(entry):
     return entry.get().strip() != ""
 
+
 def validate_year(entry):
-    return entry.get().strip() != "" and len(entry.get().strip()) == 5 and entry.get().strip()[0:2].isdigit() and entry.get().strip()[3:5].isdigit() and entry.get().strip()[2] == "-"
+    return entry.get().strip() != "" and len(entry.get().strip(
+    )) == 5 and entry.get().strip()[0:2].isdigit() and entry.get().strip(
+    )[3:5].isdigit() and entry.get().strip()[2] == "-"
 
 
 validation_functions = {
@@ -55,7 +61,6 @@ validation_functions = {
     "Department ID": validate_department_id,
     "Person in Charge ID": validate_person_in_charge_id,
     "Enrollment Count": validate_enrollment_count,
-
     "Department Name": validate_department_name,
     "Program Name": validate_program_name,
     "Year": validate_year,
@@ -87,11 +92,11 @@ def handle_data_submission(entries, status_label, category):
             if category == "Departments":
                 DB.add_department(data["Name"], data["Code"])
             elif category == "Faculty":
-                DB.add_faculty(data["Name"], data["Email"],
-                                       data["Rank"], data["Department ID"])
+                DB.add_faculty(data["Name"], data["Email"], data["Rank"],
+                               data["Department ID"])
             elif category == "Programs":
                 DB.add_program(data["Name"], data["Department ID"],
-                                       data["Person in Charge ID"])
+                               data["Person in Charge ID"])
             # Add similar branches for other categories
             status_label.config(
                 text=f"Data for {category} successfully submitted.",
@@ -132,6 +137,7 @@ def add_data_fields(tab, field_names, validation_functions, status_label,
 
     return entries
 
+
 def handle_query_submission(entries, status_label, category):
     is_valid = all(validate_non_empty(entry) for entry in entries.values())
     if is_valid:
@@ -141,17 +147,22 @@ def handle_query_submission(entries, status_label, category):
 
             if category == "Department":
                 if data["Choice"] == "faculty":
-                    results = DB.get_department_faculty_by_name(data["Department Name"])
+                    results = DB.get_department_faculty_by_name(
+                        data["Department Name"])
                 elif data["Choice"] == "program":
-                    results = DB.get_department_programs_by_name(data["Department Name"])
+                    results = DB.get_department_programs_by_name(
+                        data["Department Name"])
             elif category == "Program":
                 if data["Choice"] == "courses":
-                    results = DB.get_program_courses_by_name(data["Program Name"])
+                    results = DB.get_program_courses_by_name(
+                        data["Program Name"])
                 elif data["Choice"] == "objectives":
-                    results = DB.get_program_objectives_by_name(data["Program Name"])
+                    results = DB.get_program_objectives_by_name(
+                        data["Program Name"])
             elif category == "Semester Program":
                 if data["Choice"] == "evaluation":
-                    results = DB.get_results_by_semester(data["Semester"], data["Program Name"])
+                    results = DB.get_results_by_semester(
+                        data["Semester"], data["Program Name"])
             elif category == "Year":
                 if data["Choice"] == "evaluation":
                     results = DB.get_results_by_year(data["Year"])
@@ -164,8 +175,9 @@ def handle_query_submission(entries, status_label, category):
     else:
         status_label.config(text="Invalid data in some fields.", fg="red")
 
+
 def add_query_fields(tab, field_names, validation_functions, status_label,
-                    category):
+                     category):
     entries = {}
     for field in field_names:
         frame = tk.Frame(tab)
@@ -186,9 +198,9 @@ def add_query_fields(tab, field_names, validation_functions, status_label,
             elif category == "Year":
                 choice_options = ["evaluation"]
             choice_dropdown = ttk.Combobox(frame,
-                textvariable=choice_var,
-                values=choice_options,
-                state="readonly")
+                                           textvariable=choice_var,
+                                           values=choice_options,
+                                           state="readonly")
             choice_dropdown.set(choice_options[0])
             choice_dropdown.pack(side="right", expand=True, fill="x")
             entries[field] = choice_dropdown
@@ -205,7 +217,7 @@ def add_query_fields(tab, field_names, validation_functions, status_label,
         text="Submit",
         state="disabled",
         command=lambda: handle_query_submission(entries, status_label, category
-                                               ),
+                                                ),
     )
     submit_button.pack(pady=10)
 
@@ -253,6 +265,127 @@ def add_faculty_fields(tab, field_names, validation_functions, status_label):
     return entries
 
 
+def handle_course_program_assignment(entries, status_label):
+    is_valid = all(validate_non_empty(entry) for entry in entries.values())
+    if is_valid:
+        data = {field: entry.get() for field, entry in entries.items()}
+        try:
+            DB.assign_course_to_program(data["Program ID"], data["Course ID"])
+            status_label.config(
+                text="Course successfully assigned to program.", fg="green")
+        except Exception as e:
+            status_label.config(text=str(e), fg="red")
+    else:
+        status_label.config(text="Invalid data in some fields.", fg="red")
+
+
+def add_course_program_assignment_fields(tab, validation_functions,
+                                         status_label):
+    entries = {}
+    fields = ["Program ID", "Course ID"]
+    for field in fields:
+        frame = tk.Frame(tab)
+        frame.pack(side="top", fill="x", padx=5, pady=5)
+        label = tk.Label(frame, text=field, width=20)
+        label.pack(side="left")
+        entry = tk.Entry(frame)
+        entry.pack(side="right", expand=True, fill="x")
+        entry.bind(
+            "<KeyRelease>",
+            lambda event, e=entry: check_entries(entries, submit_button))
+        entries[field] = entry
+
+    submit_button = tk.Button(tab,
+                              text="Assign",
+                              state="disabled",
+                              command=lambda: handle_course_program_assignment(
+                                  entries, status_label))
+    submit_button.pack(pady=10)
+    check_entries(entries, submit_button)
+
+
+def handle_objective_assignment(entries, status_label):
+    is_valid = all(validate_non_empty(entry) for entry in entries.values())
+    if is_valid:
+        data = {field: entry.get() for field, entry in entries.items()}
+        try:
+            DB.assign_objective_to_course(data["Course ID"],
+                                          data["Objective ID"],
+                                          data["Program ID"])
+            status_label.config(text="Objective successfully assigned.",
+                                fg="green")
+        except Exception as e:
+            status_label.config(text=str(e), fg="red")
+    else:
+        status_label.config(text="Invalid data in some fields.", fg="red")
+
+
+def add_objective_assignment_fields(tab, validation_functions, status_label):
+    entries = {}
+    fields = ["Course ID", "Objective ID", "Program ID"]
+    for field in fields:
+        frame = tk.Frame(tab)
+        frame.pack(side="top", fill="x", padx=5, pady=5)
+        label = tk.Label(frame, text=field, width=20)
+        label.pack(side="left")
+        entry = tk.Entry(frame)
+        entry.pack(side="right", expand=True, fill="x")
+        entry.bind(
+            "<KeyRelease>",
+            lambda event, e=entry: check_entries(entries, submit_button))
+        entries[field] = entry
+
+    submit_button = tk.Button(
+        tab,
+        text="Assign",
+        state="disabled",
+        command=lambda: handle_objective_assignment(entries, status_label))
+    submit_button.pack(pady=10)
+    check_entries(entries, submit_button)
+
+
+def handle_evaluation_submission(entries, status_label):
+    is_valid = all(validate_non_empty(entry) for entry in entries.values())
+    if is_valid:
+        data = {field: entry.get() for field, entry in entries.items()}
+        try:
+            DB.add_section_evaluation(data["Section ID"], data["Objective ID"],
+                                      data["Evaluation Method"],
+                                      int(data["Students Met"]))
+            status_label.config(
+                text="Evaluation result successfully submitted.", fg="green")
+        except Exception as e:
+            status_label.config(text=str(e), fg="red")
+    else:
+        status_label.config(text="Invalid data in some fields.", fg="red")
+
+
+def add_evaluation_fields(tab, validation_functions, status_label):
+    entries = {}
+    fields = [
+        "Section ID", "Objective ID", "Evaluation Method", "Students Met"
+    ]
+    for field in fields:
+        frame = tk.Frame(tab)
+        frame.pack(side="top", fill="x", padx=5, pady=5)
+        label = tk.Label(frame, text=field, width=20)
+        label.pack(side="left")
+        entry = tk.Entry(frame)
+        entry.pack(side="right", expand=True, fill="x")
+        entry.bind(
+            "<KeyRelease>",
+            lambda event, e=entry: check_entries(entries, submit_button))
+        entries[field] = entry
+
+    submit_button = tk.Button(
+        tab,
+        text="Submit",
+        state="disabled",
+        command=lambda: handle_evaluation_submission(entries, status_label))
+    submit_button.pack(pady=10)
+    check_entries(entries, submit_button)
+
+
 def setup_data_entry_tab(notebook, status_label):
     data_entry_tab = ttk.Frame(notebook)
     notebook.add(data_entry_tab, text="Data Entry")
@@ -298,6 +431,22 @@ def setup_data_entry_tab(notebook, status_label):
     add_data_fields(objectives_tab, objective_fields, {}, status_label,
                     "Learning Objectives")
 
+    course_program_tab = ttk.Frame(data_entry_notebook)
+    data_entry_notebook.add(course_program_tab,
+                            text="Assign Course to Program")
+    add_course_program_assignment_fields(course_program_tab,
+                                         validation_functions, status_label)
+
+    objective_assignment_tab = ttk.Frame(data_entry_notebook)
+    data_entry_notebook.add(objective_assignment_tab, text="Assign Objectives")
+    add_objective_assignment_fields(objective_assignment_tab,
+                                    validation_functions, status_label)
+
+    evaluation_tab = ttk.Frame(data_entry_notebook)
+    data_entry_notebook.add(evaluation_tab, text="Section Evaluation")
+    add_evaluation_fields(evaluation_tab, validation_functions, status_label)
+
+
 def setup_data_query_tab(notebook, status_label):
     data_query_tab = ttk.Frame(notebook)
     notebook.add(data_query_tab, text="Data Query")
@@ -309,25 +458,33 @@ def setup_data_query_tab(notebook, status_label):
     department_tab = ttk.Frame(data_query_notebook)
     data_query_notebook.add(department_tab, text="Department")
     department_fields = ["Choice", "Department Name"]
-    add_query_fields(department_tab, department_fields, {"Department Name": validate_department_name}, status_label, "Department")
+    add_query_fields(department_tab, department_fields,
+                     {"Department Name": validate_department_name},
+                     status_label, "Department")
 
     # Program Queries
     program_tab = ttk.Frame(data_query_notebook)
     data_query_notebook.add(program_tab, text="Program")
     program_fields = ["Choice", "Program Name"]
-    add_query_fields(program_tab, program_fields, {"Program Name": validate_program_name}, status_label, "Program")
+    add_query_fields(program_tab, program_fields,
+                     {"Program Name": validate_program_name}, status_label,
+                     "Program")
 
     # Semester + Program Queries
     semester_program_tab = ttk.Frame(data_query_notebook)
     data_query_notebook.add(semester_program_tab, text="Semester Program")
     semester_program_fields = ["Choice", "Semester", "Program Name"]
-    add_query_fields(semester_program_tab, semester_program_fields, {"Program Name": validate_program_name}, status_label, "Semester Program")
+    add_query_fields(semester_program_tab, semester_program_fields,
+                     {"Program Name": validate_program_name}, status_label,
+                     "Semester Program")
 
     # Year Queries
     year_tab = ttk.Frame(data_query_notebook)
     data_query_notebook.add(year_tab, text="Year")
     year_fields = ["Choice", "Year"]
-    add_query_fields(year_tab, year_fields, {"Year": validate_year}, status_label, "Year")
+    add_query_fields(year_tab, year_fields, {"Year": validate_year},
+                     status_label, "Year")
+
 
 def reset_database():
     DATABASE_URI = "sqlite:///university_evaluation.db"
@@ -366,6 +523,7 @@ def initialize_gui():
 
     window.mainloop()
 
+
 def initialize_db(db):
     global DB
     DB = db
@@ -395,64 +553,136 @@ def initialize_db(db):
     db.add_program("Creative Computing", 2, 7)
 
     # Course
-    db.add_course("BIZ1000", "Intro to Business", "Introduction to all things Business", 1)
-    db.add_course("BIZ1100", "Intro to Marketing", "Introduction to all things Marketing", 1)
-    db.add_course("BIZ1200", "Intro to Accounting", "Introduction to all things Accounting", 1)
-    db.add_course("BIZ2000", "Intermediate Business", "Intermediate class for all things Business", 1)
-    db.add_course("BIZ2100", "Intermediate Marketing", "Intermediate class for all things Marketing", 1)
-    db.add_course("BIZ2200", "Intermediate Accounting", "Intermediate class for all things Accounting", 1)
-    db.add_course("BIZ3000", "Advanced Business", "Advanced class for all things Business", 1)
-    db.add_course("BIZ3100", "Advanced Marketing", "Advanced class for all things Marketing", 1)
-    db.add_course("BIZ3200", "Advanced Accounting", "Advanced class for all things Accounting", 1)
+    db.add_course("BIZ1000", "Intro to Business",
+                  "Introduction to all things Business", 1)
+    db.add_course("BIZ1100", "Intro to Marketing",
+                  "Introduction to all things Marketing", 1)
+    db.add_course("BIZ1200", "Intro to Accounting",
+                  "Introduction to all things Accounting", 1)
+    db.add_course("BIZ2000", "Intermediate Business",
+                  "Intermediate class for all things Business", 1)
+    db.add_course("BIZ2100", "Intermediate Marketing",
+                  "Intermediate class for all things Marketing", 1)
+    db.add_course("BIZ2200", "Intermediate Accounting",
+                  "Intermediate class for all things Accounting", 1)
+    db.add_course("BIZ3000", "Advanced Business",
+                  "Advanced class for all things Business", 1)
+    db.add_course("BIZ3100", "Advanced Marketing",
+                  "Advanced class for all things Marketing", 1)
+    db.add_course("BIZ3200", "Advanced Accounting",
+                  "Advanced class for all things Accounting", 1)
 
-    db.add_course("ENG1000", "Intro to Computer Science", "Introduction to all things Computer Science", 2)
-    db.add_course("ENG1100", "Intro to Computer Engineering", "Introduction to all things Computer Engineering", 2)
-    db.add_course("ENG1200", "Intro to Creative Computing", "Introduction to all things Creative Computing", 2)
-    db.add_course("ENG2000", "Intermediate Computer Science", "Intermediate class for all things Computer Science", 2)
-    db.add_course("ENG2100", "Intermediate Computer Engineering", "Intermediate class for all things Computer Engineering", 2)
-    db.add_course("ENG2200", "Intermediate Creative Computing", "Intermediate class for all things Creative Computing", 2)
-    db.add_course("ENG3000", "Advanced Computer Science", "Advanced class for all things Computer Science", 2)
-    db.add_course("ENG3100", "Advanced Computer Engineering", "Advanced class for all things Computer Engineering", 2)
-    db.add_course("ENG3200", "Advanced Creative Computing", "Advanced class for all things Creative Computing", 2)
+    db.add_course("ENG1000", "Intro to Computer Science",
+                  "Introduction to all things Computer Science", 2)
+    db.add_course("ENG1100", "Intro to Computer Engineering",
+                  "Introduction to all things Computer Engineering", 2)
+    db.add_course("ENG1200", "Intro to Creative Computing",
+                  "Introduction to all things Creative Computing", 2)
+    db.add_course("ENG2000", "Intermediate Computer Science",
+                  "Intermediate class for all things Computer Science", 2)
+    db.add_course("ENG2100", "Intermediate Computer Engineering",
+                  "Intermediate class for all things Computer Engineering", 2)
+    db.add_course("ENG2200", "Intermediate Creative Computing",
+                  "Intermediate class for all things Creative Computing", 2)
+    db.add_course("ENG3000", "Advanced Computer Science",
+                  "Advanced class for all things Computer Science", 2)
+    db.add_course("ENG3100", "Advanced Computer Engineering",
+                  "Advanced class for all things Computer Engineering", 2)
+    db.add_course("ENG3200", "Advanced Creative Computing",
+                  "Advanced class for all things Creative Computing", 2)
 
     # Section
     semester = ["Fall", "Spring", "Summer"]
     year = [21, 22, 23, 24, 25]
     for i in range(0, 51, 10):
-        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], year[int(random() * 5)], "BIZ1000", int(random() * 4) + 1, int(random() * 50))
+        db.add_section(
+            int(random() * 10) + i, semester[int(random() * 3)],
+            year[int(random() * 5)], "BIZ1000",
+            int(random() * 4) + 1, int(random() * 50))
     for i in range(0, 51, 10):
-        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], year[int(random() * 5)], "BIZ1100", int(random() * 4) + 1, int(random() * 50))
+        db.add_section(
+            int(random() * 10) + i, semester[int(random() * 3)],
+            year[int(random() * 5)], "BIZ1100",
+            int(random() * 4) + 1, int(random() * 50))
     for i in range(0, 51, 10):
-        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], year[int(random() * 5)], "BIZ1200", int(random() * 4) + 1, int(random() * 50))
+        db.add_section(
+            int(random() * 10) + i, semester[int(random() * 3)],
+            year[int(random() * 5)], "BIZ1200",
+            int(random() * 4) + 1, int(random() * 50))
     for i in range(0, 51, 10):
-        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], year[int(random() * 5)], "BIZ2000", int(random() * 4) + 1, int(random() * 50))
+        db.add_section(
+            int(random() * 10) + i, semester[int(random() * 3)],
+            year[int(random() * 5)], "BIZ2000",
+            int(random() * 4) + 1, int(random() * 50))
     for i in range(0, 51, 10):
-        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], year[int(random() * 5)], "BIZ2100", int(random() * 4) + 1, int(random() * 50))
+        db.add_section(
+            int(random() * 10) + i, semester[int(random() * 3)],
+            year[int(random() * 5)], "BIZ2100",
+            int(random() * 4) + 1, int(random() * 50))
     for i in range(0, 51, 10):
-        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], year[int(random() * 5)], "BIZ2200", int(random() * 4) + 1, int(random() * 50))
+        db.add_section(
+            int(random() * 10) + i, semester[int(random() * 3)],
+            year[int(random() * 5)], "BIZ2200",
+            int(random() * 4) + 1, int(random() * 50))
     for i in range(0, 51, 10):
-        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], year[int(random() * 5)], "BIZ3000", int(random() * 4) + 1, int(random() * 50))
+        db.add_section(
+            int(random() * 10) + i, semester[int(random() * 3)],
+            year[int(random() * 5)], "BIZ3000",
+            int(random() * 4) + 1, int(random() * 50))
     for i in range(0, 51, 10):
-        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], year[int(random() * 5)], "BIZ3100", int(random() * 4) + 1, int(random() * 50))
+        db.add_section(
+            int(random() * 10) + i, semester[int(random() * 3)],
+            year[int(random() * 5)], "BIZ3100",
+            int(random() * 4) + 1, int(random() * 50))
     for i in range(0, 51, 10):
-        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], year[int(random() * 5)], "BIZ3200", int(random() * 4) + 1, int(random() * 50))
+        db.add_section(
+            int(random() * 10) + i, semester[int(random() * 3)],
+            year[int(random() * 5)], "BIZ3200",
+            int(random() * 4) + 1, int(random() * 50))
     for i in range(0, 51, 10):
-        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], year[int(random() * 5)], "ENG1000", int(random() * 4) + 5, int(random() * 50))
+        db.add_section(
+            int(random() * 10) + i, semester[int(random() * 3)],
+            year[int(random() * 5)], "ENG1000",
+            int(random() * 4) + 5, int(random() * 50))
     for i in range(0, 51, 10):
-        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], year[int(random() * 5)], "ENG1100", int(random() * 4) + 5, int(random() * 50))
+        db.add_section(
+            int(random() * 10) + i, semester[int(random() * 3)],
+            year[int(random() * 5)], "ENG1100",
+            int(random() * 4) + 5, int(random() * 50))
     for i in range(0, 51, 10):
-        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], year[int(random() * 5)], "ENG1200", int(random() * 4) + 5, int(random() * 50))
+        db.add_section(
+            int(random() * 10) + i, semester[int(random() * 3)],
+            year[int(random() * 5)], "ENG1200",
+            int(random() * 4) + 5, int(random() * 50))
     for i in range(0, 51, 10):
-        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], year[int(random() * 5)], "ENG2000", int(random() * 4) + 5, int(random() * 50))
+        db.add_section(
+            int(random() * 10) + i, semester[int(random() * 3)],
+            year[int(random() * 5)], "ENG2000",
+            int(random() * 4) + 5, int(random() * 50))
     for i in range(0, 51, 10):
-        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], year[int(random() * 5)], "ENG2100", int(random() * 4) + 5, int(random() * 50))
+        db.add_section(
+            int(random() * 10) + i, semester[int(random() * 3)],
+            year[int(random() * 5)], "ENG2100",
+            int(random() * 4) + 5, int(random() * 50))
     for i in range(0, 51, 10):
-        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], year[int(random() * 5)], "ENG2200", int(random() * 4) + 5, int(random() * 50))
+        db.add_section(
+            int(random() * 10) + i, semester[int(random() * 3)],
+            year[int(random() * 5)], "ENG2200",
+            int(random() * 4) + 5, int(random() * 50))
     for i in range(0, 51, 10):
-        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], year[int(random() * 5)], "ENG3000", int(random() * 4) + 5, int(random() * 50))
+        db.add_section(
+            int(random() * 10) + i, semester[int(random() * 3)],
+            year[int(random() * 5)], "ENG3000",
+            int(random() * 4) + 5, int(random() * 50))
     for i in range(0, 51, 10):
-        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], year[int(random() * 5)], "ENG3100", int(random() * 4) + 5, int(random() * 50))
+        db.add_section(
+            int(random() * 10) + i, semester[int(random() * 3)],
+            year[int(random() * 5)], "ENG3100",
+            int(random() * 4) + 5, int(random() * 50))
     for i in range(0, 51, 10):
-        db.add_section(int(random() * 10) + i, semester[int(random() * 3)], year[int(random() * 5)], "ENG3200", int(random() * 4) + 5, int(random() * 50))
+        db.add_section(
+            int(random() * 10) + i, semester[int(random() * 3)],
+            year[int(random() * 5)], "ENG3200",
+            int(random() * 4) + 5, int(random() * 50))
 
     print('db initialized successfully')
