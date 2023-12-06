@@ -272,11 +272,21 @@ class SessionManager:
         #                   f'ON s.id = se.section_id '
         #                   f'WHERE s.semester = \'{semester}\' '
         #                   f'AND p.program_id = {program_id}')
-        return self.query(f'SELECT * '
-                          f'FROM programs ') # todo
+        return self.query(f'SELECT s.number, se.evaluation_method, se.students_met '
+                          f'FROM sections AS s '
+                          f'JOIN section_evaluations AS se '
+                          f'ON s.id = se.section_id '
+                          f'JOIN courses AS c '
+                          f'ON s.course_id = c.id '
+                          f'JOIN program_courses AS pc '
+                          f'ON c.id = pc.course_id '
+                          f'JOIN programs AS p '
+                          f'on p.id = pc.program_id '
+                          f'WHERE s.semester = \'{semester}\' '
+                          f'AND p.id = {program_id}')
 
     # List all of the evaluation results for each objective/sub-objective
     # Show course/section involved in evaluation, list result for each course/section, and aggregate the result to show the number (and percentage) of student
     def get_results_by_year(self, year):
         return self.query(f'SELECT * '
-                          f'FROM course_objectives') # todo
+                          f'FROM course_objectives ') # todo
