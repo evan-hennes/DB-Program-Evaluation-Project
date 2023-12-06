@@ -247,4 +247,5 @@ class SessionManager:
                           f'OR (s.year = {year[0]} '
                           f'AND s.semester = \'Fall\')'
                           f'OR (s.year = {year[1]} '
-                          f'AND s.semester = \'Spring\') ')
+                          f'AND s.semester = \'Spring\') '
+                          f'GROUP BY se.section_id')
