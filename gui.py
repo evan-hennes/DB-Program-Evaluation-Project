@@ -93,9 +93,9 @@ def handle_data_submission(entries, status_label, category):
                 DB.add_department(data["Name"], data["Code"])
             elif category == "Faculty":
                 DB.add_faculty(data["Name"], data["Email"], data["Rank"],
-                               data["Department ID"])
+                               data["Code"])
             elif category == "Programs":
-                DB.add_program(data["Name"], data["Department ID"],
+                DB.add_program(data["Name"], data["Code"],
                                data["Person in Charge ID"])
             # Add similar branches for other categories
             status_label.config(
@@ -402,19 +402,19 @@ def setup_data_entry_tab(notebook, status_label):
 
     faculty_tab = ttk.Frame(data_entry_notebook)
     data_entry_notebook.add(faculty_tab, text="Faculty")
-    faculty_fields = ["Name", "Email", "Rank", "Department ID"]
-    add_faculty_fields(faculty_tab, faculty_fields, {"Email": validate_email},
+    faculty_fields = ["Name", "Email", "Rank", "Code"]
+    add_faculty_fields(faculty_tab, faculty_fields, {"Email": validate_email, "Code": validate_department_code },
                        status_label)
 
     programs_tab = ttk.Frame(data_entry_notebook)
     data_entry_notebook.add(programs_tab, text="Programs")
-    program_fields = ["Name", "Department ID", "Person in Charge ID"]
+    program_fields = ["Name", "Code", "Person in Charge ID"]
     add_data_fields(programs_tab, program_fields, {}, status_label, "Programs")
 
     courses_tab = ttk.Frame(data_entry_notebook)
     data_entry_notebook.add(courses_tab, text="Courses")
-    course_fields = ["ID", "Title", "Description", "Department ID"]
-    add_data_fields(courses_tab, course_fields, {"ID": validate_course_id},
+    course_fields = ["ID", "Title", "Description", "Code"]
+    add_data_fields(courses_tab, course_fields, {"ID": validate_course_id, "Code": validate_department_code },
                     status_label, "Courses")
 
     sections_tab = ttk.Frame(data_entry_notebook)
@@ -555,18 +555,18 @@ def initialize_db(db):
     # Course
     db.add_course("BIZ1000", "Intro to Business",
                   "Introduction to all things Business", 1)
-    db.add_learning_objective(1, "learn le business")
-    db.add_learning_objective(2, "how sell stuff and things", 1)
-    db.assign_course_to_program(1, "BIZ1000")
-    db.assign_objective_to_course("BIZ1000", 1)
-    db.assign_objective_to_course("BIZ1000", 2)
-    db.add_course("BIZ1100", "Intro to Marketing",
-                  "Introduction to all things Marketing", 1)
-    db.add_learning_objective(3, "learn le marketing")
-    db.add_learning_objective(4, "i mark it", 3)
-    db.assign_course_to_program(3, "BIZ1100")
-    db.assign_objective_to_course("BIZ1100", 3)
-    db.assign_objective_to_course("BIZ1100", 4)
+    # db.add_learning_objective(1, "learn le business", )
+    # db.add_learning_objective(2, "how sell stuff and things", 1)
+    # db.assign_course_to_program(1, "BIZ1000")
+    # db.assign_objective_to_course("BIZ1000", 1)
+    # db.assign_objective_to_course("BIZ1000", 2)
+    # db.add_course("BIZ1100", "Intro to Marketing",
+    #               "Introduction to all things Marketing", 1)
+    # db.add_learning_objective(3, "learn le marketing")
+    # db.add_learning_objective(4, "i mark it", 3)
+    # db.assign_course_to_program(3, "BIZ1100")
+    # db.assign_objective_to_course("BIZ1100", 3)
+    # db.assign_objective_to_course("BIZ1100", 4)
     db.add_course("BIZ1200", "Intro to Accounting",
                   "Introduction to all things Accounting", 1)
     db.add_course("BIZ2000", "Intermediate Business",
@@ -604,95 +604,97 @@ def initialize_db(db):
     # Section
     semester = ["Fall", "Spring", "Summer"]
     year = [21, 22, 23, 24, 25]
-    for i in range(0, 51, 10):
-        db.add_section(
-            int(random() * 10) + i, semester[int(random() * 3)],
-            year[int(random() * 5)], "BIZ1000",
-            int(random() * 4) + 1, int(random() * 50))
-    for i in range(0, 51, 10):
-        db.add_section(
-            int(random() * 10) + i, semester[int(random() * 3)],
-            year[int(random() * 5)], "BIZ1100",
-            int(random() * 4) + 1, int(random() * 50))
-    for i in range(0, 51, 10):
-        db.add_section(
-            int(random() * 10) + i, semester[int(random() * 3)],
-            year[int(random() * 5)], "BIZ1200",
-            int(random() * 4) + 1, int(random() * 50))
-    for i in range(0, 51, 10):
-        db.add_section(
-            int(random() * 10) + i, semester[int(random() * 3)],
-            year[int(random() * 5)], "BIZ2000",
-            int(random() * 4) + 1, int(random() * 50))
-    for i in range(0, 51, 10):
-        db.add_section(
-            int(random() * 10) + i, semester[int(random() * 3)],
-            year[int(random() * 5)], "BIZ2100",
-            int(random() * 4) + 1, int(random() * 50))
-    for i in range(0, 51, 10):
-        db.add_section(
-            int(random() * 10) + i, semester[int(random() * 3)],
-            year[int(random() * 5)], "BIZ2200",
-            int(random() * 4) + 1, int(random() * 50))
-    for i in range(0, 51, 10):
-        db.add_section(
-            int(random() * 10) + i, semester[int(random() * 3)],
-            year[int(random() * 5)], "BIZ3000",
-            int(random() * 4) + 1, int(random() * 50))
-    for i in range(0, 51, 10):
-        db.add_section(
-            int(random() * 10) + i, semester[int(random() * 3)],
-            year[int(random() * 5)], "BIZ3100",
-            int(random() * 4) + 1, int(random() * 50))
-    for i in range(0, 51, 10):
-        db.add_section(
-            int(random() * 10) + i, semester[int(random() * 3)],
-            year[int(random() * 5)], "BIZ3200",
-            int(random() * 4) + 1, int(random() * 50))
-    for i in range(0, 51, 10):
-        db.add_section(
-            int(random() * 10) + i, semester[int(random() * 3)],
-            year[int(random() * 5)], "ENG1000",
-            int(random() * 4) + 5, int(random() * 50))
-    for i in range(0, 51, 10):
-        db.add_section(
-            int(random() * 10) + i, semester[int(random() * 3)],
-            year[int(random() * 5)], "ENG1100",
-            int(random() * 4) + 5, int(random() * 50))
-    for i in range(0, 51, 10):
-        db.add_section(
-            int(random() * 10) + i, semester[int(random() * 3)],
-            year[int(random() * 5)], "ENG1200",
-            int(random() * 4) + 5, int(random() * 50))
-    for i in range(0, 51, 10):
-        db.add_section(
-            int(random() * 10) + i, semester[int(random() * 3)],
-            year[int(random() * 5)], "ENG2000",
-            int(random() * 4) + 5, int(random() * 50))
-    for i in range(0, 51, 10):
-        db.add_section(
-            int(random() * 10) + i, semester[int(random() * 3)],
-            year[int(random() * 5)], "ENG2100",
-            int(random() * 4) + 5, int(random() * 50))
-    for i in range(0, 51, 10):
-        db.add_section(
-            int(random() * 10) + i, semester[int(random() * 3)],
-            year[int(random() * 5)], "ENG2200",
-            int(random() * 4) + 5, int(random() * 50))
-    for i in range(0, 51, 10):
-        db.add_section(
-            int(random() * 10) + i, semester[int(random() * 3)],
-            year[int(random() * 5)], "ENG3000",
-            int(random() * 4) + 5, int(random() * 50))
-    for i in range(0, 51, 10):
-        db.add_section(
-            int(random() * 10) + i, semester[int(random() * 3)],
-            year[int(random() * 5)], "ENG3100",
-            int(random() * 4) + 5, int(random() * 50))
-    for i in range(0, 51, 10):
-        db.add_section(
-            int(random() * 10) + i, semester[int(random() * 3)],
-            year[int(random() * 5)], "ENG3200",
-            int(random() * 4) + 5, int(random() * 50))
+    # db.add_section(200, "Fall", 23, "BIZ1000", 3, 40)
+    # db.add_section_evaluation(1, 1, "Good", 20)
+    # for i in range(0, 51, 10):
+    #     db.add_section(
+    #         int(random() * 10) + i, semester[int(random() * 3)],
+    #         year[int(random() * 5)], "BIZ1000",
+    #         int(random() * 4) + 1, int(random() * 50))
+    # for i in range(0, 51, 10):
+    #     db.add_section(
+    #         int(random() * 10) + i, semester[int(random() * 3)],
+    #         year[int(random() * 5)], "BIZ1100",
+    #         int(random() * 4) + 1, int(random() * 50))
+    # for i in range(0, 51, 10):
+    #     db.add_section(
+    #         int(random() * 10) + i, semester[int(random() * 3)],
+    #         year[int(random() * 5)], "BIZ1200",
+    #         int(random() * 4) + 1, int(random() * 50))
+    # for i in range(0, 51, 10):
+    #     db.add_section(
+    #         int(random() * 10) + i, semester[int(random() * 3)],
+    #         year[int(random() * 5)], "BIZ2000",
+    #         int(random() * 4) + 1, int(random() * 50))
+    # for i in range(0, 51, 10):
+    #     db.add_section(
+    #         int(random() * 10) + i, semester[int(random() * 3)],
+    #         year[int(random() * 5)], "BIZ2100",
+    #         int(random() * 4) + 1, int(random() * 50))
+    # for i in range(0, 51, 10):
+    #     db.add_section(
+    #         int(random() * 10) + i, semester[int(random() * 3)],
+    #         year[int(random() * 5)], "BIZ2200",
+    #         int(random() * 4) + 1, int(random() * 50))
+    # for i in range(0, 51, 10):
+    #     db.add_section(
+    #         int(random() * 10) + i, semester[int(random() * 3)],
+    #         year[int(random() * 5)], "BIZ3000",
+    #         int(random() * 4) + 1, int(random() * 50))
+    # for i in range(0, 51, 10):
+    #     db.add_section(
+    #         int(random() * 10) + i, semester[int(random() * 3)],
+    #         year[int(random() * 5)], "BIZ3100",
+    #         int(random() * 4) + 1, int(random() * 50))
+    # for i in range(0, 51, 10):
+    #     db.add_section(
+    #         int(random() * 10) + i, semester[int(random() * 3)],
+    #         year[int(random() * 5)], "BIZ3200",
+    #         int(random() * 4) + 1, int(random() * 50))
+    # for i in range(0, 51, 10):
+    #     db.add_section(
+    #         int(random() * 10) + i, semester[int(random() * 3)],
+    #         year[int(random() * 5)], "ENG1000",
+    #         int(random() * 4) + 5, int(random() * 50))
+    # for i in range(0, 51, 10):
+    #     db.add_section(
+    #         int(random() * 10) + i, semester[int(random() * 3)],
+    #         year[int(random() * 5)], "ENG1100",
+    #         int(random() * 4) + 5, int(random() * 50))
+    # for i in range(0, 51, 10):
+    #     db.add_section(
+    #         int(random() * 10) + i, semester[int(random() * 3)],
+    #         year[int(random() * 5)], "ENG1200",
+    #         int(random() * 4) + 5, int(random() * 50))
+    # for i in range(0, 51, 10):
+    #     db.add_section(
+    #         int(random() * 10) + i, semester[int(random() * 3)],
+    #         year[int(random() * 5)], "ENG2000",
+    #         int(random() * 4) + 5, int(random() * 50))
+    # for i in range(0, 51, 10):
+    #     db.add_section(
+    #         int(random() * 10) + i, semester[int(random() * 3)],
+    #         year[int(random() * 5)], "ENG2100",
+    #         int(random() * 4) + 5, int(random() * 50))
+    # for i in range(0, 51, 10):
+    #     db.add_section(
+    #         int(random() * 10) + i, semester[int(random() * 3)],
+    #         year[int(random() * 5)], "ENG2200",
+    #         int(random() * 4) + 5, int(random() * 50))
+    # for i in range(0, 51, 10):
+    #     db.add_section(
+    #         int(random() * 10) + i, semester[int(random() * 3)],
+    #         year[int(random() * 5)], "ENG3000",
+    #         int(random() * 4) + 5, int(random() * 50))
+    # for i in range(0, 51, 10):
+    #     db.add_section(
+    #         int(random() * 10) + i, semester[int(random() * 3)],
+    #         year[int(random() * 5)], "ENG3100",
+    #         int(random() * 4) + 5, int(random() * 50))
+    # for i in range(0, 51, 10):
+    #     db.add_section(
+    #         int(random() * 10) + i, semester[int(random() * 3)],
+    #         year[int(random() * 5)], "ENG3200",
+    #         int(random() * 4) + 5, int(random() * 50))
 
     print('db initialized successfully')
