@@ -68,17 +68,15 @@ class ProgramCourses(Base):
 
 class CourseObjectives(Base):
     __tablename__ = "course_objectives"
-    id = Column(Integer, primary_key=True)
-    course_id = Column(String, ForeignKey("courses.id"))
-    objective_id = Column(String, ForeignKey("learning_objectives.id"))
-    program_id = Column(Integer, ForeignKey("programs.id"))
+    course_id = Column(String, ForeignKey("courses.id"), primary_key=True)
+    objective_id = Column(String, ForeignKey("learning_objectives.id"), primary_key=True)
+    program_id = Column(Integer, ForeignKey("programs.id"), primary_key=True)
 
 
 class SectionEvaluations(Base):
     __tablename__ = "section_evaluations"
-    id = Column(Integer, primary_key=True)
-    section_id = Column(Integer, ForeignKey("sections.id"))
-    objective_id = Column(String, ForeignKey("learning_objectives.id"))
+    section_id = Column(Integer, ForeignKey("sections.id"), primary_key=True)
+    objective_id = Column(String, ForeignKey("learning_objectives.id"), primary_key=True)
     evaluation_method = Column(String)
     students_met = Column(Integer)
 
@@ -92,23 +90,38 @@ class SessionManager:
 
     def add_department(self, name, code):
         new_department = Department(name=name, code=code)
-        self.session.add(new_department)
-        self.session.commit()
+        try:
+            self.session.add(new_department)
+        except: 
+            self.session.rollback()
+            raise
+        else:
+            self.session.commit()
 
     def add_faculty(self, name, email, rank, department_id):
         new_faculty = Faculty(name=name,
                               email=email,
                               rank=rank,
                               department_id=department_id)
-        self.session.add(new_faculty)
-        self.session.commit()
+        try:
+            self.session.add(new_faculty)
+        except: 
+            self.session.rollback()
+            raise
+        else:
+            self.session.commit()
 
     def add_program(self, name, department_id, in_charge_id):
         new_program = Program(name=name,
                               department_id=department_id,
                               in_charge_id=in_charge_id)
-        self.session.add(new_program)
-        self.session.commit()
+        try:
+            self.session.add(new_program)
+        except: 
+            self.session.rollback()
+            raise
+        else:
+            self.session.commit()
 
     def add_course(self, id, title, description, department_id):
         new_course = Course(id=id,
@@ -128,27 +141,47 @@ class SessionManager:
             instructor_id=instructor_id,
             enrollment_count=enrollment_count,
         )
-        self.session.add(new_section)
-        self.session.commit()
+        try:
+            self.session.add(new_section)
+        except: 
+            self.session.rollback()
+            raise
+        else:
+            self.session.commit()
 
     def add_learning_objective(self, id, description, parent_id=None):
         new_objective = LearningObjective(id=id,
                                           description=description,
                                           parent_id=parent_id)
-        self.session.add(new_objective)
-        self.session.commit()
+        try:
+            self.session.add(new_objective)
+        except: 
+            self.session.rollback()
+            raise
+        else:
+            self.session.commit()
 
     def assign_course_to_program(self, program_id, course_id):
         new_assignment = ProgramCourses(program_id=program_id,
                                         course_id=course_id)
-        self.session.add(new_assignment)
-        self.session.commit()
+        try:
+            self.session.add(new_assignment)
+        except: 
+            self.session.rollback()
+            raise
+        else:
+            self.session.commit()
 
     def assign_objective_to_course(self, course_id, objective_id):
         new_assignment = CourseObjectives(course_id=course_id,
                                           objective_id=objective_id)
-        self.session.add(new_assignment)
-        self.session.commit()
+        try:    
+            self.session.add(new_assignment)
+        except: 
+            self.session.rollback()
+            raise
+        else:
+            self.session.commit()
 
     def add_section_evaluation(self, section_id, objective_id,
                                evaluation_method, students_met):
@@ -158,8 +191,13 @@ class SessionManager:
             evaluation_method=evaluation_method,
             students_met=students_met,
         )
-        self.session.add(new_evaluation)
-        self.session.commit()
+        try:
+            self.session.add(new_evaluation)
+        except: 
+            self.session.rollback()
+            raise
+        else:
+            self.session.commit()
 
     def query(self, query):
         return [[attr for attr in row] for row in self.session.execute(text(query))]
