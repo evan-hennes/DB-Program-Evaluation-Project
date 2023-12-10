@@ -95,7 +95,7 @@ def handle_data_submission(entries, status_label, category):
                 DB.add_faculty(data["Name"], data["Email"], data["Rank"],
                                data["Code"])
             elif category == "Programs":
-                DB.add_program(data["Name"], data["Department ID"],
+                DB.add_program(data["Name"], data["Code"],
                                data["Person in Charge ID"])
             # Add similar branches for other categories
             status_label.config(
@@ -403,18 +403,18 @@ def setup_data_entry_tab(notebook, status_label):
     faculty_tab = ttk.Frame(data_entry_notebook)
     data_entry_notebook.add(faculty_tab, text="Faculty")
     faculty_fields = ["Name", "Email", "Rank", "Code"]
-    add_faculty_fields(faculty_tab, faculty_fields, {"Email": validate_email},
+    add_faculty_fields(faculty_tab, faculty_fields, {"Email": validate_email, "Code": validate_department_code },
                        status_label)
 
     programs_tab = ttk.Frame(data_entry_notebook)
     data_entry_notebook.add(programs_tab, text="Programs")
-    program_fields = ["Name", "Department ID", "Person in Charge ID"]
+    program_fields = ["Name", "Code", "Person in Charge ID"]
     add_data_fields(programs_tab, program_fields, {}, status_label, "Programs")
 
     courses_tab = ttk.Frame(data_entry_notebook)
     data_entry_notebook.add(courses_tab, text="Courses")
-    course_fields = ["ID", "Title", "Description", "Department ID"]
-    add_data_fields(courses_tab, course_fields, {"ID": validate_course_id},
+    course_fields = ["ID", "Title", "Description", "Code"]
+    add_data_fields(courses_tab, course_fields, {"ID": validate_course_id, "Code": validate_department_code },
                     status_label, "Courses")
 
     sections_tab = ttk.Frame(data_entry_notebook)

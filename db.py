@@ -98,11 +98,11 @@ class SessionManager:
         else:
             self.session.commit()
 
-    def add_faculty(self, name, email, rank, department_id):
+    def add_faculty(self, name, email, rank, department_code):
         new_faculty = Faculty(name=name,
                               email=email,
                               rank=rank,
-                              department_id=department_id)
+                              department_code=department_code)
         try:
             self.session.add(new_faculty)
         except: 
@@ -111,9 +111,9 @@ class SessionManager:
         else:
             self.session.commit()
 
-    def add_program(self, name, department_id, in_charge_id):
+    def add_program(self, name, department_code, in_charge_id):
         new_program = Program(name=name,
-                              department_id=department_id,
+                              department_code=department_code,
                               in_charge_id=in_charge_id)
         try:
             self.session.add(new_program)
@@ -123,11 +123,11 @@ class SessionManager:
         else:
             self.session.commit()
 
-    def add_course(self, id, title, description, department_id):
+    def add_course(self, id, title, description, department_code):
         new_course = Course(id=id,
                             title=title,
                             description=description,
-                            department_id=department_id)
+                            department_id=department_code)
         self.session.add(new_course)
         self.session.commit()
 
