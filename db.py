@@ -21,14 +21,14 @@ class Faculty(Base):
     name = Column(String)
     email = Column(String, unique=True)
     rank = Column(String)
-    department_id = Column(Integer, ForeignKey("departments.id"))
+    department_code = Column(Integer, ForeignKey("departments.code"))
 
 
 class Program(Base):
     __tablename__ = "programs"
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
-    department_id = Column(Integer, ForeignKey("departments.id"))
+    department_code = Column(Integer, ForeignKey("departments.code"))
     in_charge_id = Column(Integer, ForeignKey("faculty.id"))
     courses = relationship("Course", secondary="program_courses")
 
@@ -38,7 +38,7 @@ class Course(Base):
     id = Column(String, primary_key=True)  # Department Code + 4-digit number
     title = Column(String)
     description = Column(Text)
-    department_id = Column(Integer, ForeignKey("departments.id"))
+    department_code = Column(Integer, ForeignKey("departments.code"))
     sections = relationship("Section", backref="course")
 
 class Section(Base):
