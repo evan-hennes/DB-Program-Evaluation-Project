@@ -568,99 +568,117 @@ def initialize_db(db):
     for i in range(1, 11):
         isSubObjective = True if i % 3 == 0 else False
         if isSubObjective:
-            options = [i for i in range(1, i) if i % 3 != 0]
+            options = [j for j in range(1, i) if j % 3 != 0]
             # id, description, parent_id (optional)
             db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("BIZ1000", i, 1)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("BIZ1100", "Intro to Marketing",
                   "Introduction to all things Marketing", "BIZ")
     db.assign_course_to_program(3, "BIZ1100")
     for i in range(11, 21):
         isSubObjective = True if i % 3 == 0 else False
         if isSubObjective:
-            options = [i for i in range(11, i) if i % 3 != 0]
+            options = [j for j in range(11, i) if j % 3 != 0]
             # id, description, parent_id (optional)
             db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("BIZ1100", i, 3)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("BIZ1200", "Intro to Accounting",
                   "Introduction to all things Accounting", "BIZ")
     db.assign_course_to_program(2, "BIZ1200")
     for i in range(21, 31):
-        isSubObjective = True if i % 3 == 0 else False
+        isSubObjective = True if i % 3 == 0 and i != 21 else False
         if isSubObjective:
-            options = [i for i in range(11, i) if i % 3 != 0]
+            options = [j for j in range(21, i + 1) if j % 3 != 0]
             # id, description, parent_id (optional)
             db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("BIZ1200", i, 2)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("BIZ2000", "Intermediate Finance",
                   "Intermediate class for all things Finance", "BIZ")
     db.assign_course_to_program(1, "BIZ2000")
     for i in range(31, 41):
         isSubObjective = True if i % 3 == 0 else False
         if isSubObjective:
-            options = [i for i in range(11, i) if i % 3 != 0]
+            options = [j for j in range(31, i) if j % 3 != 0]
             # id, description, parent_id (optional)
             db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("BIZ2000", i, 1)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("BIZ2100", "Intermediate Marketing",
                   "Intermediate class for all things Marketing", "BIZ")
     db.assign_course_to_program(3, "BIZ2100")
     for i in range(41, 51):
         isSubObjective = True if i % 3 == 0 else False
         if isSubObjective:
-            options = [i for i in range(11, i) if i % 3 != 0]
+            options = [j for j in range(41, i) if j % 3 != 0]
             # id, description, parent_id (optional)
             db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("BIZ2100", i, 3)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("BIZ2200", "Intermediate Accounting",
                   "Intermediate class for all things Accounting", "BIZ")
     db.assign_course_to_program(2, "BIZ2200")
     for i in range(51, 61):
-        isSubObjective = True if i % 3 == 0 else False
+        isSubObjective = True if i % 3 == 0 and i != 51 else False
         if isSubObjective:
-            options = [i for i in range(11, i) if i % 3 != 0]
+            options = [j for j in range(51, i) if j % 3 != 0]
             # id, description, parent_id (optional)
             db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("BIZ2200", i, 2)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("BIZ3000", "Advanced Finance",
                   "Advanced class for all things Finance", "BIZ")
     db.assign_course_to_program(1, "BIZ3000")
     for i in range(61, 71):
         isSubObjective = True if i % 3 == 0 else False
         if isSubObjective:
-            options = [i for i in range(11, i) if i % 3 != 0]
+            options = [j for j in range(61, i) if j % 3 != 0]
             # id, description, parent_id (optional)
             db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("BIZ3000", i, 1)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("BIZ3100", "Advanced Marketing",
                   "Advanced class for all things Marketing", "BIZ")
     db.assign_course_to_program(3, "BIZ3100")
     for i in range(71, 81):
         isSubObjective = True if i % 3 == 0 else False
         if isSubObjective:
-            options = [i for i in range(11, i) if i % 3 != 0]
+            options = [j for j in range(71, i) if j % 3 != 0]
             # id, description, parent_id (optional)
             db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("BIZ3100", i, 3)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("BIZ3200", "Advanced Accounting",
                   "Advanced class for all things Accounting", "BIZ")
     db.assign_course_to_program(2, "BIZ3200")
     for i in range(81, 91):
-        isSubObjective = True if i % 3 == 0 else False
+        isSubObjective = True if i % 3 == 0 and i != 81 else False
         if isSubObjective:
-            options = [i for i in range(11, i) if i % 3 != 0]
+            options = [j for j in range(81, i) if j % 3 != 0]
             # id, description, parent_id (optional)
             db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("BIZ3200", i, 2)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
 
     db.add_course("ENG1000", "Intro to Computer Science",
                   "Introduction to all things Computer Science", "ENG")
@@ -668,99 +686,117 @@ def initialize_db(db):
     for i in range(91, 101):
         isSubObjective = True if i % 3 == 0 else False
         if isSubObjective:
-            options = [i for i in range(11, i) if i % 3 != 0]
+            options = [j for j in range(91, i) if j % 3 != 0]
             # id, description, parent_id (optional)
             db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("ENG1000", i, 4)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("ENG1100", "Intro to Computer Engineering",
                   "Introduction to all things Computer Engineering", "ENG")
     db.assign_course_to_program(5, "ENG1100")
     for i in range(101, 111):
         isSubObjective = True if i % 3 == 0 else False
         if isSubObjective:
-            options = [i for i in range(11, i) if i % 3 != 0]
+            options = [j for j in range(101, i) if j % 3 != 0]
             # id, description, parent_id (optional)
             db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("ENG1100", i, 5)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("ENG1200", "Intro to Creative Computing",
                   "Introduction to all things Creative Computing", "ENG")
     db.assign_course_to_program(6, "ENG1200")
     for i in range(111, 121):
-        isSubObjective = True if i % 3 == 0 else False
+        isSubObjective = True if i % 3 == 0 and i != 111 else False
         if isSubObjective:
-            options = [i for i in range(11, i) if i % 3 != 0]
+            options = [j for j in range(111, i) if j % 3 != 0]
             # id, description, parent_id (optional)
             db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("ENG1200", i, 6)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("ENG2000", "Intermediate Computer Science",
                   "Intermediate class for all things Computer Science", "ENG")
     db.assign_course_to_program(4, "ENG2000")
     for i in range(121, 131):
         isSubObjective = True if i % 3 == 0 else False
         if isSubObjective:
-            options = [i for i in range(11, i) if i % 3 != 0]
+            options = [j for j in range(121, i) if j % 3 != 0]
             # id, description, parent_id (optional)
             db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("ENG2000", i, 4)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("ENG2100", "Intermediate Computer Engineering",
                   "Intermediate class for all things Computer Engineering", "ENG")
     db.assign_course_to_program(5, "ENG2100")
     for i in range(131, 141):
         isSubObjective = True if i % 3 == 0 else False
         if isSubObjective:
-            options = [i for i in range(11, i) if i % 3 != 0]
+            options = [j for j in range(131, i) if j % 3 != 0]
             # id, description, parent_id (optional)
             db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("ENG2100", i, 5)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("ENG2200", "Intermediate Creative Computing",
                   "Intermediate class for all things Creative Computing", "ENG")
     db.assign_course_to_program(6, "ENG2200")
     for i in range(141, 151):
-        isSubObjective = True if i % 3 == 0 else False
+        isSubObjective = True if i % 3 == 0 and i != 141 else False
         if isSubObjective:
-            options = [i for i in range(11, i) if i % 3 != 0]
+            options = [j for j in range(141, i) if j % 3 != 0]
             # id, description, parent_id (optional)
             db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("ENG2200", i, 6)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("ENG3000", "Advanced Computer Science",
                   "Advanced class for all things Computer Science", "ENG")
     db.assign_course_to_program(4, "ENG3000")
     for i in range(151, 161):
         isSubObjective = True if i % 3 == 0 else False
         if isSubObjective:
-            options = [i for i in range(11, i) if i % 3 != 0]
+            options = [j for j in range(151, i) if j % 3 != 0]
             # id, description, parent_id (optional)
             db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("ENG1100", i, 5)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("ENG3100", "Advanced Computer Engineering",
                   "Advanced class for all things Computer Engineering", "ENG")
     db.assign_course_to_program(5, "ENG3100")
     for i in range(161, 171):
         isSubObjective = True if i % 3 == 0 else False
         if isSubObjective:
-            options = [i for i in range(11, i) if i % 3 != 0]
+            options = [j for j in range(161, i) if j % 3 != 0]
             # id, description, parent_id (optional)
             db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("ENG3100", i, 5)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("ENG3200", "Advanced Creative Computing",
                   "Advanced class for all things Creative Computing", "ENG")
     db.assign_course_to_program(6, "ENG3200")
     for i in range(171, 181):
-        isSubObjective = True if i % 3 == 0 else False
+        isSubObjective = True if i % 3 == 0 and i != 171 else False
         if isSubObjective:
-            options = [i for i in range(11, i) if i % 3 != 0]
+            options = [j for j in range(171, i) if j % 3 != 0]
             # id, description, parent_id (optional)
             db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("ENG3200", i, 6)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
 
     # Section
     semester = ["Fall", "Spring", "Summer"]
