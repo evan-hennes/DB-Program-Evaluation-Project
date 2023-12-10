@@ -533,168 +533,511 @@ def initialize_db(db):
     db.add_department("Lyle School of Engineering", "ENG")
 
     # Faculty
-    db.add_faculty("Vishal Ahuja", "vishal.ahuja@smu.edu", "associate", 1)
-    db.add_faculty("Amy Altizer", "amy.altizer@smu.edu", "adjunct", 1)
-    db.add_faculty("Thomas Barry", "thomas.barry@smu.edu", "full", 1)
-    db.add_faculty("Wendy Bradley", "wendy.bradley@smu.edu", "assistant", 1)
+    db.add_faculty("Vishal Ahuja", "vishal.ahuja@smu.edu", "associate", "BIZ")
+    db.add_faculty("Amy Altizer", "amy.altizer@smu.edu", "adjunct", "BIZ")
+    db.add_faculty("Thomas Barry", "thomas.barry@smu.edu", "full", "BIZ")
+    db.add_faculty("Wendy Bradley", "wendy.bradley@smu.edu", "assistant", "BIZ")
 
-    db.add_faculty("Frank Coyle", "frank.coyle@smu.edu", "associate", 2)
-    db.add_faculty("Qiguo Jing", "qiguo.jing@smu.edu", "adjunct", 2)
-    db.add_faculty("Theodore Manikas", "theodore.manikas@smu.edu", "full", 2)
-    db.add_faculty("Corey Clark", "corey.clark@smu.edu", "assistant", 2)
+    db.add_faculty("Frank Coyle", "frank.coyle@smu.edu", "associate", "ENG")
+    db.add_faculty("Qiguo Jing", "qiguo.jing@smu.edu", "adjunct", "ENG")
+    db.add_faculty("Theodore Manikas", "theodore.manikas@smu.edu", "full", "ENG")
+    db.add_faculty("Corey Clark", "corey.clark@smu.edu", "assistant", "ENG")
 
     # Program
-    db.add_program("Finance", 1, 3) # 1
-    db.add_program("Accounting", 1, 3) # 2
-    db.add_program("Marketing", 1, 3) # 3
+    db.add_program("Finance", "BIZ", 3) # 1
+    db.add_program("Accounting", "BIZ", 3) # 2
+    db.add_program("Marketing", "BIZ", 3) # 3
 
-    db.add_program("Computer Science", 2, 7) # 4
-    db.add_program("Computer Engineering", 2, 7) # 5
-    db.add_program("Creative Computing", 2, 7) # 6
+    db.add_program("Computer Science", "ENG", 7) # 4
+    db.add_program("Computer Engineering", "ENG", 7) # 5
+    db.add_program("Creative Computing", "ENG", 7) # 6
 
     # Course
-    db.add_course("BIZ1000", "Intro to Business",
-                  "Introduction to all things Business", 1)
-    # db.add_learning_objective(1, "learn le business", )
-    # db.add_learning_objective(2, "how sell stuff and things", 1)
-    # db.assign_course_to_program(1, "BIZ1000")
-    # db.assign_objective_to_course("BIZ1000", 1)
-    # db.assign_objective_to_course("BIZ1000", 2)
-    # db.add_course("BIZ1100", "Intro to Marketing",
-    #               "Introduction to all things Marketing", 1)
-    # db.add_learning_objective(3, "learn le marketing")
-    # db.add_learning_objective(4, "i mark it", 3)
-    # db.assign_course_to_program(3, "BIZ1100")
-    # db.assign_objective_to_course("BIZ1100", 3)
-    # db.assign_objective_to_course("BIZ1100", 4)
+    dummy_text = ["Lorem ipsum dolor sit amet",
+                  "consectetur adipiscing elit",
+                  "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+                  "Ut enim ad minim veniam",
+                  "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat",
+                  "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur",
+                  "Excepteur sint occaecat cupidatat non proident",
+                  "sunt in culpa qui officia deserunt mollit anim id est laborum"]
+
+    db.add_course("BIZ1000", "Intro to Finance",
+                  "Introduction to all things Finance", "BIZ")
+    db.assign_course_to_program(1, "BIZ1000") # program_id, course_id
+    for i in range(1, 11):
+        isSubObjective = True if i % 3 == 0 else False
+        if isSubObjective:
+            options = [j for j in range(1, i) if j % 3 != 0]
+            # id, description, parent_id (optional)
+            db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
+            # course_id, objective_id, program_id
+            db.assign_objective_to_course("BIZ1000", i, 1)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
+    db.add_course("BIZ1100", "Intro to Marketing",
+                  "Introduction to all things Marketing", "BIZ")
+    db.assign_course_to_program(3, "BIZ1100")
+    for i in range(11, 21):
+        isSubObjective = True if i % 3 == 0 else False
+        if isSubObjective:
+            options = [j for j in range(11, i) if j % 3 != 0]
+            # id, description, parent_id (optional)
+            db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
+            # course_id, objective_id, program_id
+            db.assign_objective_to_course("BIZ1100", i, 3)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("BIZ1200", "Intro to Accounting",
-                  "Introduction to all things Accounting", 1)
-    db.add_course("BIZ2000", "Intermediate Business",
-                  "Intermediate class for all things Business", 1)
+                  "Introduction to all things Accounting", "BIZ")
+    db.assign_course_to_program(2, "BIZ1200")
+    for i in range(21, 31):
+        isSubObjective = True if i % 3 == 0 and i != 21 else False
+        if isSubObjective:
+            options = [j for j in range(21, i + 1) if j % 3 != 0]
+            # id, description, parent_id (optional)
+            db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
+            # course_id, objective_id, program_id
+            db.assign_objective_to_course("BIZ1200", i, 2)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
+    db.add_course("BIZ2000", "Intermediate Finance",
+                  "Intermediate class for all things Finance", "BIZ")
+    db.assign_course_to_program(1, "BIZ2000")
+    for i in range(31, 41):
+        isSubObjective = True if i % 3 == 0 else False
+        if isSubObjective:
+            options = [j for j in range(31, i) if j % 3 != 0]
+            # id, description, parent_id (optional)
+            db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
+            # course_id, objective_id, program_id
+            db.assign_objective_to_course("BIZ2000", i, 1)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("BIZ2100", "Intermediate Marketing",
-                  "Intermediate class for all things Marketing", 1)
+                  "Intermediate class for all things Marketing", "BIZ")
+    db.assign_course_to_program(3, "BIZ2100")
+    for i in range(41, 51):
+        isSubObjective = True if i % 3 == 0 else False
+        if isSubObjective:
+            options = [j for j in range(41, i) if j % 3 != 0]
+            # id, description, parent_id (optional)
+            db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
+            # course_id, objective_id, program_id
+            db.assign_objective_to_course("BIZ2100", i, 3)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("BIZ2200", "Intermediate Accounting",
-                  "Intermediate class for all things Accounting", 1)
-    db.add_course("BIZ3000", "Advanced Business",
-                  "Advanced class for all things Business", 1)
+                  "Intermediate class for all things Accounting", "BIZ")
+    db.assign_course_to_program(2, "BIZ2200")
+    for i in range(51, 61):
+        isSubObjective = True if i % 3 == 0 and i != 51 else False
+        if isSubObjective:
+            options = [j for j in range(51, i) if j % 3 != 0]
+            # id, description, parent_id (optional)
+            db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
+            # course_id, objective_id, program_id
+            db.assign_objective_to_course("BIZ2200", i, 2)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
+    db.add_course("BIZ3000", "Advanced Finance",
+                  "Advanced class for all things Finance", "BIZ")
+    db.assign_course_to_program(1, "BIZ3000")
+    for i in range(61, 71):
+        isSubObjective = True if i % 3 == 0 else False
+        if isSubObjective:
+            options = [j for j in range(61, i) if j % 3 != 0]
+            # id, description, parent_id (optional)
+            db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
+            # course_id, objective_id, program_id
+            db.assign_objective_to_course("BIZ3000", i, 1)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("BIZ3100", "Advanced Marketing",
-                  "Advanced class for all things Marketing", 1)
+                  "Advanced class for all things Marketing", "BIZ")
+    db.assign_course_to_program(3, "BIZ3100")
+    for i in range(71, 81):
+        isSubObjective = True if i % 3 == 0 else False
+        if isSubObjective:
+            options = [j for j in range(71, i) if j % 3 != 0]
+            # id, description, parent_id (optional)
+            db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
+            # course_id, objective_id, program_id
+            db.assign_objective_to_course("BIZ3100", i, 3)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("BIZ3200", "Advanced Accounting",
-                  "Advanced class for all things Accounting", 1)
+                  "Advanced class for all things Accounting", "BIZ")
+    db.assign_course_to_program(2, "BIZ3200")
+    for i in range(81, 91):
+        isSubObjective = True if i % 3 == 0 and i != 81 else False
+        if isSubObjective:
+            options = [j for j in range(81, i) if j % 3 != 0]
+            # id, description, parent_id (optional)
+            db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
+            # course_id, objective_id, program_id
+            db.assign_objective_to_course("BIZ3200", i, 2)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
 
     db.add_course("ENG1000", "Intro to Computer Science",
-                  "Introduction to all things Computer Science", 2)
+                  "Introduction to all things Computer Science", "ENG")
+    db.assign_course_to_program(4, "ENG1000")
+    for i in range(91, 101):
+        isSubObjective = True if i % 3 == 0 else False
+        if isSubObjective:
+            options = [j for j in range(91, i) if j % 3 != 0]
+            # id, description, parent_id (optional)
+            db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
+            # course_id, objective_id, program_id
+            db.assign_objective_to_course("ENG1000", i, 4)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("ENG1100", "Intro to Computer Engineering",
-                  "Introduction to all things Computer Engineering", 2)
+                  "Introduction to all things Computer Engineering", "ENG")
+    db.assign_course_to_program(5, "ENG1100")
+    for i in range(101, 111):
+        isSubObjective = True if i % 3 == 0 else False
+        if isSubObjective:
+            options = [j for j in range(101, i) if j % 3 != 0]
+            # id, description, parent_id (optional)
+            db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
+            # course_id, objective_id, program_id
+            db.assign_objective_to_course("ENG1100", i, 5)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("ENG1200", "Intro to Creative Computing",
-                  "Introduction to all things Creative Computing", 2)
+                  "Introduction to all things Creative Computing", "ENG")
+    db.assign_course_to_program(6, "ENG1200")
+    for i in range(111, 121):
+        isSubObjective = True if i % 3 == 0 and i != 111 else False
+        if isSubObjective:
+            options = [j for j in range(111, i) if j % 3 != 0]
+            # id, description, parent_id (optional)
+            db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
+            # course_id, objective_id, program_id
+            db.assign_objective_to_course("ENG1200", i, 6)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("ENG2000", "Intermediate Computer Science",
-                  "Intermediate class for all things Computer Science", 2)
+                  "Intermediate class for all things Computer Science", "ENG")
+    db.assign_course_to_program(4, "ENG2000")
+    for i in range(121, 131):
+        isSubObjective = True if i % 3 == 0 else False
+        if isSubObjective:
+            options = [j for j in range(121, i) if j % 3 != 0]
+            # id, description, parent_id (optional)
+            db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
+            # course_id, objective_id, program_id
+            db.assign_objective_to_course("ENG2000", i, 4)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("ENG2100", "Intermediate Computer Engineering",
-                  "Intermediate class for all things Computer Engineering", 2)
+                  "Intermediate class for all things Computer Engineering", "ENG")
+    db.assign_course_to_program(5, "ENG2100")
+    for i in range(131, 141):
+        isSubObjective = True if i % 3 == 0 else False
+        if isSubObjective:
+            options = [j for j in range(131, i) if j % 3 != 0]
+            # id, description, parent_id (optional)
+            db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
+            # course_id, objective_id, program_id
+            db.assign_objective_to_course("ENG2100", i, 5)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("ENG2200", "Intermediate Creative Computing",
-                  "Intermediate class for all things Creative Computing", 2)
+                  "Intermediate class for all things Creative Computing", "ENG")
+    db.assign_course_to_program(6, "ENG2200")
+    for i in range(141, 151):
+        isSubObjective = True if i % 3 == 0 and i != 141 else False
+        if isSubObjective:
+            options = [j for j in range(141, i) if j % 3 != 0]
+            # id, description, parent_id (optional)
+            db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
+            # course_id, objective_id, program_id
+            db.assign_objective_to_course("ENG2200", i, 6)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("ENG3000", "Advanced Computer Science",
-                  "Advanced class for all things Computer Science", 2)
+                  "Advanced class for all things Computer Science", "ENG")
+    db.assign_course_to_program(4, "ENG3000")
+    for i in range(151, 161):
+        isSubObjective = True if i % 3 == 0 else False
+        if isSubObjective:
+            options = [j for j in range(151, i) if j % 3 != 0]
+            # id, description, parent_id (optional)
+            db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
+            # course_id, objective_id, program_id
+            db.assign_objective_to_course("ENG1100", i, 5)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("ENG3100", "Advanced Computer Engineering",
-                  "Advanced class for all things Computer Engineering", 2)
+                  "Advanced class for all things Computer Engineering", "ENG")
+    db.assign_course_to_program(5, "ENG3100")
+    for i in range(161, 171):
+        isSubObjective = True if i % 3 == 0 else False
+        if isSubObjective:
+            options = [j for j in range(161, i) if j % 3 != 0]
+            # id, description, parent_id (optional)
+            db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
+            # course_id, objective_id, program_id
+            db.assign_objective_to_course("ENG3100", i, 5)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
     db.add_course("ENG3200", "Advanced Creative Computing",
-                  "Advanced class for all things Creative Computing", 2)
+                  "Advanced class for all things Creative Computing", "ENG")
+    db.assign_course_to_program(6, "ENG3200")
+    for i in range(171, 181):
+        isSubObjective = True if i % 3 == 0 and i != 171 else False
+        if isSubObjective:
+            options = [j for j in range(171, i) if j % 3 != 0]
+            # id, description, parent_id (optional)
+            db.add_learning_objective(i, dummy_text[int(random()) * 8], options[int(random()) * len(options)])
+            # course_id, objective_id, program_id
+            db.assign_objective_to_course("ENG3200", i, 6)
+        else:
+            db.add_learning_objective(i, dummy_text[int(random()) * 8])
 
     # Section
     semester = ["Fall", "Spring", "Summer"]
     year = [21, 22, 23, 24, 25]
-    # db.add_section(200, "Fall", 23, "BIZ1000", 3, 40)
-    # db.add_section_evaluation(1, 1, "Good", 20)
-    # for i in range(0, 51, 10):
-    #     db.add_section(
-    #         int(random() * 10) + i, semester[int(random() * 3)],
-    #         year[int(random() * 5)], "BIZ1000",
-    #         int(random() * 4) + 1, int(random() * 50))
-    # for i in range(0, 51, 10):
-    #     db.add_section(
-    #         int(random() * 10) + i, semester[int(random() * 3)],
-    #         year[int(random() * 5)], "BIZ1100",
-    #         int(random() * 4) + 1, int(random() * 50))
-    # for i in range(0, 51, 10):
-    #     db.add_section(
-    #         int(random() * 10) + i, semester[int(random() * 3)],
-    #         year[int(random() * 5)], "BIZ1200",
-    #         int(random() * 4) + 1, int(random() * 50))
-    # for i in range(0, 51, 10):
-    #     db.add_section(
-    #         int(random() * 10) + i, semester[int(random() * 3)],
-    #         year[int(random() * 5)], "BIZ2000",
-    #         int(random() * 4) + 1, int(random() * 50))
-    # for i in range(0, 51, 10):
-    #     db.add_section(
-    #         int(random() * 10) + i, semester[int(random() * 3)],
-    #         year[int(random() * 5)], "BIZ2100",
-    #         int(random() * 4) + 1, int(random() * 50))
-    # for i in range(0, 51, 10):
-    #     db.add_section(
-    #         int(random() * 10) + i, semester[int(random() * 3)],
-    #         year[int(random() * 5)], "BIZ2200",
-    #         int(random() * 4) + 1, int(random() * 50))
-    # for i in range(0, 51, 10):
-    #     db.add_section(
-    #         int(random() * 10) + i, semester[int(random() * 3)],
-    #         year[int(random() * 5)], "BIZ3000",
-    #         int(random() * 4) + 1, int(random() * 50))
-    # for i in range(0, 51, 10):
-    #     db.add_section(
-    #         int(random() * 10) + i, semester[int(random() * 3)],
-    #         year[int(random() * 5)], "BIZ3100",
-    #         int(random() * 4) + 1, int(random() * 50))
-    # for i in range(0, 51, 10):
-    #     db.add_section(
-    #         int(random() * 10) + i, semester[int(random() * 3)],
-    #         year[int(random() * 5)], "BIZ3200",
-    #         int(random() * 4) + 1, int(random() * 50))
-    # for i in range(0, 51, 10):
-    #     db.add_section(
-    #         int(random() * 10) + i, semester[int(random() * 3)],
-    #         year[int(random() * 5)], "ENG1000",
-    #         int(random() * 4) + 5, int(random() * 50))
-    # for i in range(0, 51, 10):
-    #     db.add_section(
-    #         int(random() * 10) + i, semester[int(random() * 3)],
-    #         year[int(random() * 5)], "ENG1100",
-    #         int(random() * 4) + 5, int(random() * 50))
-    # for i in range(0, 51, 10):
-    #     db.add_section(
-    #         int(random() * 10) + i, semester[int(random() * 3)],
-    #         year[int(random() * 5)], "ENG1200",
-    #         int(random() * 4) + 5, int(random() * 50))
-    # for i in range(0, 51, 10):
-    #     db.add_section(
-    #         int(random() * 10) + i, semester[int(random() * 3)],
-    #         year[int(random() * 5)], "ENG2000",
-    #         int(random() * 4) + 5, int(random() * 50))
-    # for i in range(0, 51, 10):
-    #     db.add_section(
-    #         int(random() * 10) + i, semester[int(random() * 3)],
-    #         year[int(random() * 5)], "ENG2100",
-    #         int(random() * 4) + 5, int(random() * 50))
-    # for i in range(0, 51, 10):
-    #     db.add_section(
-    #         int(random() * 10) + i, semester[int(random() * 3)],
-    #         year[int(random() * 5)], "ENG2200",
-    #         int(random() * 4) + 5, int(random() * 50))
-    # for i in range(0, 51, 10):
-    #     db.add_section(
-    #         int(random() * 10) + i, semester[int(random() * 3)],
-    #         year[int(random() * 5)], "ENG3000",
-    #         int(random() * 4) + 5, int(random() * 50))
-    # for i in range(0, 51, 10):
-    #     db.add_section(
-    #         int(random() * 10) + i, semester[int(random() * 3)],
-    #         year[int(random() * 5)], "ENG3100",
-    #         int(random() * 4) + 5, int(random() * 50))
-    # for i in range(0, 51, 10):
-    #     db.add_section(
-    #         int(random() * 10) + i, semester[int(random() * 3)],
-    #         year[int(random() * 5)], "ENG3200",
-    #         int(random() * 4) + 5, int(random() * 50))
+    eval = ["Poor", "Fair", "Good", "Great", "Excellent"]
+    # db.add_section(200, "Fall", 23, "BIZ1000", 3, 40) # number, semester, year, course_id, instructor_id, enrollment_count
+    # db.add_section_evaluation(1, 1, "Good", 20) # section_id, objective_id, evaluation_method, students_met
+    secid = 0
+    for i in range(0, 51, 10):
+        secnum = int(random() * 10) + i
+        sem = semester[int(random() * 3)]
+        yr = year[int(random() * 5)]
+        cid = "BIZ1000"
+        iid = int(random() * 4) + 1
+        numstudents = int(random() * 50)
+        db.add_section(secnum, sem, yr, cid, iid, numstudents)
+        secid += 1
+        for j in range(1, 11):
+            ev = eval[int(random() * 5)]
+            numEvStudents = int(random() * numstudents)
+            db.add_section_evaluation(secid, j, ev, numEvStudents)
+    for i in range(0, 51, 10):
+        secnum=int(random() * 10) + i
+        sem = semester[int(random() * 3)]
+        yr = year[int(random() * 5)]
+        cid = "BIZ1100"
+        iid = int(random() * 4) + 1
+        numstudents = int(random() * 50)
+        db.add_section(secnum, sem, yr, cid, iid, numstudents)
+        secid += 1
+        for j in range(11, 21):
+            ev = eval[int(random() * 5)]
+            numEvStudents = int(random() * numstudents)
+            db.add_section_evaluation(secid, j, ev, numEvStudents)
+    for i in range(0, 51, 10):
+        secnum = int(random() * 10) + i
+        sem = semester[int(random() * 3)]
+        yr = year[int(random() * 5)]
+        cid = "BIZ1200"
+        iid = int(random() * 4) + 1
+        numstudents = int(random() * 50)
+        db.add_section(secnum, sem, yr, cid, iid, numstudents)
+        secid += 1
+        for j in range(21, 31):
+            ev = eval[int(random() * 5)]
+            numEvStudents = int(random() * numstudents)
+            db.add_section_evaluation(secid, j, ev, numEvStudents)
+    for i in range(0, 51, 10):
+        secnum = int(random() * 10) + i
+        sem = semester[int(random() * 3)]
+        yr = year[int(random() * 5)]
+        cid = "BIZ2000"
+        iid = int(random() * 4) + 1
+        numstudents = int(random() * 50)
+        db.add_section(secnum, sem, yr, cid, iid, numstudents)
+        secid += 1
+        for j in range(31, 41):
+            ev = eval[int(random() * 5)]
+            numEvStudents = int(random() * numstudents)
+            db.add_section_evaluation(secid, j, ev, numEvStudents)
+    for i in range(0, 51, 10):
+        secnum = int(random() * 10) + i
+        sem = semester[int(random() * 3)]
+        yr = year[int(random() * 5)]
+        cid = "BIZ2100"
+        iid = int(random() * 4) + 1
+        numstudents = int(random() * 50)
+        db.add_section(secnum, sem, yr, cid, iid, numstudents)
+        secid += 1
+        for j in range(41, 51):
+            ev = eval[int(random() * 5)]
+            numEvStudents = int(random() * numstudents)
+            db.add_section_evaluation(secid, j, ev, numEvStudents)
+    for i in range(0, 51, 10):
+        secnum = int(random() * 10) + i
+        sem = semester[int(random() * 3)]
+        yr = year[int(random() * 5)]
+        cid = "BIZ2200"
+        iid = int(random() * 4) + 1
+        numstudents = int(random() * 50)
+        db.add_section(secnum, sem, yr, cid, iid, numstudents)
+        secid += 1
+        for j in range(51, 61):
+            ev = eval[int(random() * 5)]
+            numEvStudents = int(random() * numstudents)
+            db.add_section_evaluation(secid, j, ev, numEvStudents)
+    for i in range(0, 51, 10):
+        secnum = int(random() * 10) + i
+        sem = semester[int(random() * 3)]
+        yr = year[int(random() * 5)]
+        cid = "BIZ3000"
+        iid = int(random() * 4) + 1
+        numstudents = int(random() * 50)
+        db.add_section(secnum, sem, yr, cid, iid, numstudents)
+        secid += 1
+        for j in range(61, 71):
+            ev = eval[int(random() * 5)]
+            numEvStudents = int(random() * numstudents)
+            db.add_section_evaluation(secid, j, ev, numEvStudents)
+    for i in range(0, 51, 10):
+        secnum = int(random() * 10) + i
+        sem = semester[int(random() * 3)]
+        yr = year[int(random() * 5)]
+        cid = "BIZ3100"
+        iid = int(random() * 4) + 1
+        numstudents = int(random() * 50)
+        db.add_section(secnum, sem, yr, cid, iid, numstudents)
+        secid += 1
+        for j in range(71, 81):
+            ev = eval[int(random() * 5)]
+            numEvStudents = int(random() * numstudents)
+            db.add_section_evaluation(secid, j, ev, numEvStudents)
+    for i in range(0, 51, 10):
+        secnum = int(random() * 10) + i
+        sem = semester[int(random() * 3)]
+        yr = year[int(random() * 5)]
+        cid = "BIZ3200"
+        iid = int(random() * 4) + 1
+        numstudents = int(random() * 50)
+        db.add_section(secnum, sem, yr, cid, iid, numstudents)
+        secid += 1
+        for j in range(81, 91):
+            ev = eval[int(random() * 5)]
+            numEvStudents = int(random() * numstudents)
+            db.add_section_evaluation(secid, j, ev, numEvStudents)
+    for i in range(0, 51, 10):
+        secnum = int(random() * 10) + i
+        sem = semester[int(random() * 3)]
+        yr = year[int(random() * 5)]
+        cid = "ENG1000"
+        iid = int(random() * 4) + 1
+        numstudents = int(random() * 50)
+        db.add_section(secnum, sem, yr, cid, iid, numstudents)
+        secid += 1
+        for j in range(91, 101):
+            ev = eval[int(random() * 5)]
+            numEvStudents = int(random() * numstudents)
+            db.add_section_evaluation(secid, j, ev, numEvStudents)
+    for i in range(0, 51, 10):
+        secnum = int(random() * 10) + i
+        sem = semester[int(random() * 3)]
+        yr = year[int(random() * 5)]
+        cid = "ENG1100"
+        iid = int(random() * 4) + 1
+        numstudents = int(random() * 50)
+        db.add_section(secnum, sem, yr, cid, iid, numstudents)
+        secid += 1
+        for j in range(101, 111):
+            ev = eval[int(random() * 5)]
+            numEvStudents = int(random() * numstudents)
+            db.add_section_evaluation(secid, j, ev, numEvStudents)
+    for i in range(0, 51, 10):
+        secnum = int(random() * 10) + i
+        sem = semester[int(random() * 3)]
+        yr = year[int(random() * 5)]
+        cid = "ENG1200"
+        iid = int(random() * 4) + 1
+        numstudents = int(random() * 50)
+        db.add_section(secnum, sem, yr, cid, iid, numstudents)
+        secid += 1
+        for j in range(111, 121):
+            ev = eval[int(random() * 5)]
+            numEvStudents = int(random() * numstudents)
+            db.add_section_evaluation(secid, j, ev, numEvStudents)
+    for i in range(0, 51, 10):
+        secnum = int(random() * 10) + i
+        sem = semester[int(random() * 3)]
+        yr = year[int(random() * 5)]
+        cid = "ENG2000"
+        iid = int(random() * 4) + 1
+        numstudents = int(random() * 50)
+        db.add_section(secnum, sem, yr, cid, iid, numstudents)
+        secid += 1
+        for j in range(121, 131):
+            ev = eval[int(random() * 5)]
+            numEvStudents = int(random() * numstudents)
+            db.add_section_evaluation(secid, j, ev, numEvStudents)
+    for i in range(0, 51, 10):
+        secnum = int(random() * 10) + i
+        sem = semester[int(random() * 3)]
+        yr = year[int(random() * 5)]
+        cid = "ENG2100"
+        iid = int(random() * 4) + 1
+        numstudents = int(random() * 50)
+        db.add_section(secnum, sem, yr, cid, iid, numstudents)
+        secid += 1
+        for j in range(131, 141):
+            ev = eval[int(random() * 5)]
+            numEvStudents = int(random() * numstudents)
+            db.add_section_evaluation(secid, j, ev, numEvStudents)
+    for i in range(0, 51, 10):
+        secnum = int(random() * 10) + i
+        sem = semester[int(random() * 3)]
+        yr = year[int(random() * 5)]
+        cid = "ENG2200"
+        iid = int(random() * 4) + 1
+        numstudents = int(random() * 50)
+        db.add_section(secnum, sem, yr, cid, iid, numstudents)
+        secid += 1
+        for j in range(141, 151):
+            ev = eval[int(random() * 5)]
+            numEvStudents = int(random() * numstudents)
+            db.add_section_evaluation(secid, j, ev, numEvStudents)
+    for i in range(0, 51, 10):
+        secnum = int(random() * 10) + i
+        sem = semester[int(random() * 3)]
+        yr = year[int(random() * 5)]
+        cid = "ENG3000"
+        iid = int(random() * 4) + 1
+        numstudents = int(random() * 50)
+        db.add_section(secnum, sem, yr, cid, iid, numstudents)
+        secid += 1
+        for j in range(151, 161):
+            ev = eval[int(random() * 5)]
+            numEvStudents = int(random() * numstudents)
+            db.add_section_evaluation(secid, j, ev, numEvStudents)
+    for i in range(0, 51, 10):
+        secnum = int(random() * 10) + i
+        sem = semester[int(random() * 3)]
+        yr = year[int(random() * 5)]
+        cid = "ENG3100"
+        iid = int(random() * 4) + 1
+        numstudents = int(random() * 50)
+        db.add_section(secnum, sem, yr, cid, iid, numstudents)
+        secid += 1
+        for j in range(161, 171):
+            ev = eval[int(random() * 5)]
+            numEvStudents = int(random() * numstudents)
+            db.add_section_evaluation(secid, j, ev, numEvStudents)
+    for i in range(0, 51, 10):
+        secnum = int(random() * 10) + i
+        sem = semester[int(random() * 3)]
+        yr = year[int(random() * 5)]
+        cid = "ENG3200"
+        iid = int(random() * 4) + 1
+        numstudents = int(random() * 50)
+        db.add_section(secnum, sem, yr, cid, iid, numstudents)
+        secid += 1
+        for j in range(171, 181):
+            ev = eval[int(random() * 5)]
+            numEvStudents = int(random() * numstudents)
+            db.add_section_evaluation(secid, j, ev, numEvStudents)
 
     print('db initialized successfully')

@@ -21,14 +21,14 @@ class Faculty(Base):
     name = Column(String)
     email = Column(String, unique=True)
     rank = Column(String)
-    department_id = Column(Integer, ForeignKey("departments.id"))
+    department_code = Column(Integer, ForeignKey("departments.code"))
 
 
 class Program(Base):
     __tablename__ = "programs"
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
-    department_id = Column(Integer, ForeignKey("departments.id"))
+    department_code = Column(Integer, ForeignKey("departments.code"))
     in_charge_id = Column(Integer, ForeignKey("faculty.id"))
     courses = relationship("Course", secondary="program_courses")
 
@@ -38,7 +38,7 @@ class Course(Base):
     id = Column(String, primary_key=True)  # Department Code + 4-digit number
     title = Column(String)
     description = Column(Text)
-    department_id = Column(Integer, ForeignKey("departments.id"))
+    department_code = Column(Integer, ForeignKey("departments.code"))
     sections = relationship("Section", backref="course")
 
 class Section(Base):
@@ -127,7 +127,7 @@ class SessionManager:
         new_course = Course(id=id,
                             title=title,
                             description=description,
-                            department_id=department_code)
+                            department_code=department_code)
         self.session.add(new_course)
         self.session.commit()
 
@@ -172,9 +172,10 @@ class SessionManager:
         else:
             self.session.commit()
 
-    def assign_objective_to_course(self, course_id, objective_id):
+    def assign_objective_to_course(self, course_id, objective_id, program_id):
         new_assignment = CourseObjectives(course_id=course_id,
-                                          objective_id=objective_id)
+                                          objective_id=objective_id,
+                                          program_id=program_id)
         try:    
             self.session.add(new_assignment)
         except: 
@@ -207,7 +208,7 @@ class SessionManager:
         return self.query(f'SELECT p.name '
                           f'FROM departments AS d '
                           f'JOIN programs AS p '
-                          f'ON d.id = p.department_id '
+                          f'ON d.code = p.department_code '
                           f'WHERE d.name= \'{department_name}\'')
 
     # List all of its faculty (including what program each faculty is in charge of, if there is one)
@@ -215,7 +216,7 @@ class SessionManager:
         return self.query(f'SELECT f.name, p.name '
                           f'FROM departments AS d '
                           f'JOIN faculty AS f '
-                          f'ON d.id = f.department_id '
+                          f'ON d.code = f.department_code '
                           f'LEFT JOIN programs AS p '
                           f'ON f.id = p.in_charge_id '
                           f'WHERE d.name = \'{department_name}\'')
