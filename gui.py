@@ -533,28 +533,28 @@ def initialize_db(db):
     db.add_department("Lyle School of Engineering", "ENG")
 
     # Faculty
-    db.add_faculty("Vishal Ahuja", "vishal.ahuja@smu.edu", "associate", 1)
-    db.add_faculty("Amy Altizer", "amy.altizer@smu.edu", "adjunct", 1)
-    db.add_faculty("Thomas Barry", "thomas.barry@smu.edu", "full", 1)
-    db.add_faculty("Wendy Bradley", "wendy.bradley@smu.edu", "assistant", 1)
+    db.add_faculty("Vishal Ahuja", "vishal.ahuja@smu.edu", "associate", "BIZ")
+    db.add_faculty("Amy Altizer", "amy.altizer@smu.edu", "adjunct", "BIZ")
+    db.add_faculty("Thomas Barry", "thomas.barry@smu.edu", "full", "BIZ")
+    db.add_faculty("Wendy Bradley", "wendy.bradley@smu.edu", "assistant", "BIZ")
 
-    db.add_faculty("Frank Coyle", "frank.coyle@smu.edu", "associate", 2)
-    db.add_faculty("Qiguo Jing", "qiguo.jing@smu.edu", "adjunct", 2)
-    db.add_faculty("Theodore Manikas", "theodore.manikas@smu.edu", "full", 2)
-    db.add_faculty("Corey Clark", "corey.clark@smu.edu", "assistant", 2)
+    db.add_faculty("Frank Coyle", "frank.coyle@smu.edu", "associate", "ENG")
+    db.add_faculty("Qiguo Jing", "qiguo.jing@smu.edu", "adjunct", "ENG")
+    db.add_faculty("Theodore Manikas", "theodore.manikas@smu.edu", "full", "ENG")
+    db.add_faculty("Corey Clark", "corey.clark@smu.edu", "assistant", "ENG")
 
     # Program
-    db.add_program("Finance", 1, 3) # 1
-    db.add_program("Accounting", 1, 3) # 2
-    db.add_program("Marketing", 1, 3) # 3
+    db.add_program("Finance", "BIZ", 3) # 1
+    db.add_program("Accounting", "BIZ", 3) # 2
+    db.add_program("Marketing", "BIZ", 3) # 3
 
-    db.add_program("Computer Science", 2, 7) # 4
-    db.add_program("Computer Engineering", 2, 7) # 5
-    db.add_program("Creative Computing", 2, 7) # 6
+    db.add_program("Computer Science", "ENG", 7) # 4
+    db.add_program("Computer Engineering", "ENG", 7) # 5
+    db.add_program("Creative Computing", "ENG", 7) # 6
 
     # Course
     db.add_course("BIZ1000", "Intro to Business",
-                  "Introduction to all things Business", 1)
+                  "Introduction to all things Business", "BIZ")
     # db.add_learning_objective(1, "learn le business", )
     # db.add_learning_objective(2, "how sell stuff and things", 1)
     # db.assign_course_to_program(1, "BIZ1000")
@@ -568,38 +568,38 @@ def initialize_db(db):
     # db.assign_objective_to_course("BIZ1100", 3)
     # db.assign_objective_to_course("BIZ1100", 4)
     db.add_course("BIZ1200", "Intro to Accounting",
-                  "Introduction to all things Accounting", 1)
+                  "Introduction to all things Accounting", "BIZ")
     db.add_course("BIZ2000", "Intermediate Business",
-                  "Intermediate class for all things Business", 1)
+                  "Intermediate class for all things Business", "BIZ")
     db.add_course("BIZ2100", "Intermediate Marketing",
-                  "Intermediate class for all things Marketing", 1)
+                  "Intermediate class for all things Marketing", "BIZ")
     db.add_course("BIZ2200", "Intermediate Accounting",
-                  "Intermediate class for all things Accounting", 1)
+                  "Intermediate class for all things Accounting", "BIZ")
     db.add_course("BIZ3000", "Advanced Business",
-                  "Advanced class for all things Business", 1)
+                  "Advanced class for all things Business", "BIZ")
     db.add_course("BIZ3100", "Advanced Marketing",
-                  "Advanced class for all things Marketing", 1)
+                  "Advanced class for all things Marketing", "BIZ")
     db.add_course("BIZ3200", "Advanced Accounting",
-                  "Advanced class for all things Accounting", 1)
+                  "Advanced class for all things Accounting", "BIZ")
 
     db.add_course("ENG1000", "Intro to Computer Science",
-                  "Introduction to all things Computer Science", 2)
+                  "Introduction to all things Computer Science", "ENG")
     db.add_course("ENG1100", "Intro to Computer Engineering",
-                  "Introduction to all things Computer Engineering", 2)
+                  "Introduction to all things Computer Engineering", "ENG")
     db.add_course("ENG1200", "Intro to Creative Computing",
-                  "Introduction to all things Creative Computing", 2)
+                  "Introduction to all things Creative Computing", "ENG")
     db.add_course("ENG2000", "Intermediate Computer Science",
-                  "Intermediate class for all things Computer Science", 2)
+                  "Intermediate class for all things Computer Science", "ENG")
     db.add_course("ENG2100", "Intermediate Computer Engineering",
-                  "Intermediate class for all things Computer Engineering", 2)
+                  "Intermediate class for all things Computer Engineering", "ENG")
     db.add_course("ENG2200", "Intermediate Creative Computing",
-                  "Intermediate class for all things Creative Computing", 2)
+                  "Intermediate class for all things Creative Computing", "ENG")
     db.add_course("ENG3000", "Advanced Computer Science",
-                  "Advanced class for all things Computer Science", 2)
+                  "Advanced class for all things Computer Science", "ENG")
     db.add_course("ENG3100", "Advanced Computer Engineering",
-                  "Advanced class for all things Computer Engineering", 2)
+                  "Advanced class for all things Computer Engineering", "ENG")
     db.add_course("ENG3200", "Advanced Creative Computing",
-                  "Advanced class for all things Creative Computing", 2)
+                  "Advanced class for all things Creative Computing", "ENG")
 
     # Section
     semester = ["Fall", "Spring", "Summer"]

@@ -127,7 +127,7 @@ class SessionManager:
         new_course = Course(id=id,
                             title=title,
                             description=description,
-                            department_id=department_code)
+                            department_code=department_code)
         self.session.add(new_course)
         self.session.commit()
 
@@ -207,7 +207,7 @@ class SessionManager:
         return self.query(f'SELECT p.name '
                           f'FROM departments AS d '
                           f'JOIN programs AS p '
-                          f'ON d.id = p.department_id '
+                          f'ON d.code = p.department_code '
                           f'WHERE d.name= \'{department_name}\'')
 
     # List all of its faculty (including what program each faculty is in charge of, if there is one)
@@ -215,7 +215,7 @@ class SessionManager:
         return self.query(f'SELECT f.name, p.name '
                           f'FROM departments AS d '
                           f'JOIN faculty AS f '
-                          f'ON d.id = f.department_id '
+                          f'ON d.code = f.department_code '
                           f'LEFT JOIN programs AS p '
                           f'ON f.id = p.in_charge_id '
                           f'WHERE d.name = \'{department_name}\'')
