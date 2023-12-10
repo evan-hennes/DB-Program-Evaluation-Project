@@ -172,9 +172,10 @@ class SessionManager:
         else:
             self.session.commit()
 
-    def assign_objective_to_course(self, course_id, objective_id):
+    def assign_objective_to_course(self, course_id, objective_id, program_id):
         new_assignment = CourseObjectives(course_id=course_id,
-                                          objective_id=objective_id)
+                                          objective_id=objective_id,
+                                          program_id=program_id)
         try:    
             self.session.add(new_assignment)
         except: 
