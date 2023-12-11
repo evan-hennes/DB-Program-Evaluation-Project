@@ -22,7 +22,7 @@ def validate_email(entry):
 
 
 def validate_course_id(entry):
-    return entry.get().strip().isdigit() and len(entry.get().strip()) == 4
+    return entry.get().strip() != ""
 
 
 def validate_section_id(entry):
