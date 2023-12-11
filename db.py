@@ -86,10 +86,8 @@ class CourseObjectives(Base):
 class SectionEvaluations(Base):
     __tablename__ = "section_evaluations"
     section_id = Column(Integer, ForeignKey("sections.id"), primary_key=True)
-    objective_id = Column(
-        String(50), ForeignKey("learning_objectives.id"), primary_key=True
-    )
-    evaluation_method = Column(String(255))
+    objective_id = Column(String(50), ForeignKey("learning_objectives.id"), primary_key=True)
+    evaluation_method = Column(String(255), primary_key=True)
     students_met = Column(Integer)
 
 
@@ -234,15 +232,15 @@ class SessionManager:
         semester = semester.split(" ")
         return self.query(
             f"SELECT c.title, s.number, se.evaluation_method, se.students_met "
-            f"FROM sections AS s "
-            f"JOIN section_evaluations AS se "
-            f"ON s.id = se.section_id "
-            f"JOIN courses AS c "
-            f"ON s.course_id = c.id "
+            f"FROM courses AS c "
+            f"JOIN sections AS s "
+            f"ON c.id = s.course_id "
             f"JOIN program_courses AS pc "
             f"ON c.id = pc.course_id "
             f"JOIN programs AS p "
-            f"on p.id = pc.program_id "
+            f"ON p.id = pc.program_id "
+            f"LEFT JOIN section_evaluations AS se "
+            f"ON s.id = se.section_id "
             f"WHERE s.semester = '{semester[0]}' "  # semester[0] will contain "Fall" "Spring" etc
             f"AND s.year = {semester[1]} "  # semester[1] will contain year (i.e. 23, 24, etc.)
             f"AND p.name = '{program_name}'"
@@ -253,17 +251,22 @@ class SessionManager:
     def get_results_by_year(self, year):
         year = year.split("-")
         return self.query(
-            f"SELECT c.title, s.number, se.evaluation_method, se.students_met "
+            f"SELECT lo.description, c.title, s.number, se.evaluation_method, se.students_met, ROUND(se.students_met * 100.0/s.enrollment_count) AS percent "
             f"FROM courses AS c "
             f"JOIN sections AS s "
             f"ON c.id = s.course_id "
+            f"JOIN course_objectives AS co "
+            f"ON c.id = co.course_id "
+            f"JOIN learning_objectives AS lo "
+            f"ON co.objective_id = lo.id "
             f"JOIN section_evaluations AS se "
-            f"ON s.id = se.section_id "
+            f"ON s.id = se.section_id AND lo.id = se.objective_id "
             f"WHERE (s.year = {year[0]} "
             f"AND s.semester = 'Summer') "
             f"OR (s.year = {year[0]} "
-            f"AND s.semester = 'Fall')"
+            f"AND s.semester = 'Fall') "
             f"OR (s.year = {year[1]} "
             f"AND s.semester = 'Spring') "
-            f"GROUP BY se.section_id"
+            f"GROUP BY lo.id, c.id, s.id, se.evaluation_method "
+            f"ORDER BY c.id, s.id"
         )
