@@ -486,13 +486,8 @@ def setup_data_query_tab(notebook, status_label):
                      status_label, "Year")
 
 
-def reset_database():
-    DATABASE_URI = "sqlite:///university_evaluation.db"
-
-    engine = create_engine(DATABASE_URI)
-
+def reset_database(engine):
     Base.metadata.drop_all(engine)
-
     Base.metadata.create_all(engine)
 
 
