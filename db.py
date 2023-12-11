@@ -202,9 +202,9 @@ class SessionManager:
             f"ON c.id = pc.course_id "
             f"JOIN programs AS p "
             f"ON p.id = pc.program_id "
-            f"JOIN course_objectives AS co "
+            f"LEFT JOIN course_objectives AS co "
             f"ON co.course_id = c.id "
-            f"JOIN learning_objectives AS lo "
+            f"LEFT JOIN learning_objectives AS lo "
             f"ON co.objective_id = lo.id "
             f"WHERE p.name = '{program_name}'"
         )
@@ -212,19 +212,17 @@ class SessionManager:
     # List all of the objectives
     def get_program_objectives_by_name(self, program_name):
         return self.query(
-            f"SELECT lo.description "
+            f"SELECT DISTINCT lo.description "
             f"FROM courses AS c "
-            f"JOIN course_objectives AS co "
-            f"ON c.id = co.course_id "
-            f"JOIN learning_objectives AS lo "
-            f"ON lo.id = co.objective_id "
-            f"WHERE c.id IN ( "
-            f"SELECT pc.course_id "
-            f"FROM programs AS p "
             f"JOIN program_courses AS pc "
+            f"ON c.id = pc.course_id "
+            f"JOIN programs AS p "
             f"ON p.id = pc.program_id "
+            f"JOIN course_objectives AS co "
+            f"ON co.course_id = c.id "
+            f"JOIN learning_objectives AS lo "
+            f"ON co.objective_id = lo.id "
             f"WHERE p.name = '{program_name}'"
-            f")"
         )
 
     # List all of the evaluation results for each objective/sub-objective (If data for some sections has not been entered, indicate that information is not found)
@@ -239,7 +237,7 @@ class SessionManager:
             f"ON c.id = pc.course_id "
             f"JOIN programs AS p "
             f"ON p.id = pc.program_id "
-            f"LEFT JOIN section_evaluations AS se "
+            f"LEFT OUTER JOIN section_evaluations AS se "
             f"ON s.id = se.section_id "
             f"WHERE s.semester = '{semester[0]}' "  # semester[0] will contain "Fall" "Spring" etc
             f"AND s.year = {semester[1]} "  # semester[1] will contain year (i.e. 23, 24, etc.)
