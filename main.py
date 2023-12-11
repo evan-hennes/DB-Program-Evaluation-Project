@@ -17,7 +17,7 @@ if __name__ == "__main__":
     password = "cs5330"
     hostname = "localhost"
     db_name = "dbprog"
-    port = 3306
+    port = 6969
     mysql_connection_string = (
         f"mysql+mysqlconnector://{username}:{password}@{hostname}:{port}/{db_name}"
     )
