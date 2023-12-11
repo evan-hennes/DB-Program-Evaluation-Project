@@ -98,6 +98,9 @@ def handle_data_submission(entries, status_label, category):
             elif category == "Programs":
                 DB.add_program(data["Name"], data["Code"],
                                data["Person in Charge ID"])
+            elif category == "Courses":
+                DB.add_course(data["ID"], data["Title"],
+                               data["Description"], data["Code"])
             # Add similar branches for other categories
             status_label.config(
                 text=f"Data for {category} successfully submitted.",
@@ -272,7 +275,7 @@ def handle_course_program_assignment(entries, status_label):
     if is_valid:
         data = {field: entry.get() for field, entry in entries.items()}
         try:
-            DB.assign_course_to_program(data["Program ID"], data["Course ID"])
+            DB.assign_course_to_program(int(data["Program ID"]), data["Course ID"])
             status_label.config(
                 text="Course successfully assigned to program.", fg="green")
         except Exception as e:
@@ -559,7 +562,7 @@ def initialize_db(db):
         if isSubObjective:
             options = [j for j in range(1, i)]
             # id, description, parent_id (optional)
-            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random()) * len(options)])
+            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random() * len(options))])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("BIZ1000", i, 1)
         else:
@@ -572,7 +575,7 @@ def initialize_db(db):
         if isSubObjective:
             options = [j for j in range(3, i)]
             # id, description, parent_id (optional)
-            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random()) * len(options)])
+            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random() * len(options))])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("BIZ1100", i, 3)
         else:
@@ -585,7 +588,7 @@ def initialize_db(db):
         if isSubObjective:
             options = [j for j in range(5, i + 1)]
             # id, description, parent_id (optional)
-            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random()) * len(options)])
+            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random() * len(options))])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("BIZ1200", i, 2)
         else:
@@ -598,7 +601,7 @@ def initialize_db(db):
         if isSubObjective:
             options = [j for j in range(7, i)]
             # id, description, parent_id (optional)
-            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random()) * len(options)])
+            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random() * len(options))])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("BIZ2000", i, 1)
         else:
@@ -611,7 +614,7 @@ def initialize_db(db):
         if isSubObjective:
             options = [j for j in range(9, i)]
             # id, description, parent_id (optional)
-            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random()) * len(options)])
+            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random() * len(options))])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("BIZ2100", i, 3)
         else:
@@ -624,7 +627,7 @@ def initialize_db(db):
         if isSubObjective:
             options = [j for j in range(11, i)]
             # id, description, parent_id (optional)
-            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random()) * len(options)])
+            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random() * len(options))])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("BIZ2200", i, 2)
         else:
@@ -637,7 +640,7 @@ def initialize_db(db):
         if isSubObjective:
             options = [j for j in range(13, i)]
             # id, description, parent_id (optional)
-            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random()) * len(options)])
+            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random() * len(options))])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("BIZ3000", i, 1)
         else:
@@ -650,7 +653,7 @@ def initialize_db(db):
         if isSubObjective:
             options = [j for j in range(15, i)]
             # id, description, parent_id (optional)
-            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random()) * len(options)])
+            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random() * len(options))])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("BIZ3100", i, 3)
         else:
@@ -663,7 +666,7 @@ def initialize_db(db):
         if isSubObjective:
             options = [j for j in range(17, i)]
             # id, description, parent_id (optional)
-            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random()) * len(options)])
+            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random() * len(options))])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("BIZ3200", i, 2)
         else:
@@ -677,7 +680,7 @@ def initialize_db(db):
         if isSubObjective:
             options = [j for j in range(19, i)]
             # id, description, parent_id (optional)
-            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random()) * len(options)])
+            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random() * len(options))])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("ENG1000", i, 4)
         else:
@@ -690,7 +693,7 @@ def initialize_db(db):
         if isSubObjective:
             options = [j for j in range(21, i)]
             # id, description, parent_id (optional)
-            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random()) * len(options)])
+            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random() * len(options))])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("ENG1100", i, 5)
         else:
@@ -703,7 +706,7 @@ def initialize_db(db):
         if isSubObjective:
             options = [j for j in range(23, i)]
             # id, description, parent_id (optional)
-            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random()) * len(options)])
+            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random() * len(options))])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("ENG1200", i, 6)
         else:
@@ -716,7 +719,7 @@ def initialize_db(db):
         if isSubObjective:
             options = [j for j in range(25, i)]
             # id, description, parent_id (optional)
-            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random()) * len(options)])
+            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random() * len(options))])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("ENG2000", i, 4)
         else:
@@ -729,7 +732,7 @@ def initialize_db(db):
         if isSubObjective:
             options = [j for j in range(27, i)]
             # id, description, parent_id (optional)
-            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random()) * len(options)])
+            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random() * len(options))])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("ENG2100", i, 5)
         else:
@@ -742,7 +745,7 @@ def initialize_db(db):
         if isSubObjective:
             options = [j for j in range(29, i)]
             # id, description, parent_id (optional)
-            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random()) * len(options)])
+            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random() * len(options))])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("ENG2200", i, 6)
         else:
@@ -755,9 +758,9 @@ def initialize_db(db):
         if isSubObjective:
             options = [j for j in range(31, i)]
             # id, description, parent_id (optional)
-            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random()) * len(options)])
+            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random() * len(options))])
             # course_id, objective_id, program_id
-            db.assign_objective_to_course("ENG1100", i, 5)
+            db.assign_objective_to_course("ENG3000", i, 4)
         else:
             db.add_learning_objective(i, dummy_text[int(random() * 3)])
     db.add_course("ENG3100", "Advanced Computer Engineering",
@@ -768,7 +771,7 @@ def initialize_db(db):
         if isSubObjective:
             options = [j for j in range(33, i)]
             # id, description, parent_id (optional)
-            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random()) * len(options)])
+            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random() * len(options))])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("ENG3100", i, 5)
         else:
@@ -781,7 +784,7 @@ def initialize_db(db):
         if isSubObjective:
             options = [j for j in range(35, i)]
             # id, description, parent_id (optional)
-            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random()) * len(options)])
+            db.add_learning_objective(i, dummy_text[int(random() * 3)], options[int(random() * len(options))])
             # course_id, objective_id, program_id
             db.assign_objective_to_course("ENG3200", i, 6)
         else:
