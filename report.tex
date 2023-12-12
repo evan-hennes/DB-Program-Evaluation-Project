@@ -1,0 +1,247 @@
+\documentclass{article}
+\usepackage{fancyhdr}
+\usepackage{minted}
+\usepackage[margin=1in]{geometry}
+
+\pagestyle{fancy}
+\lhead{Database System Report}
+\rhead{CS 5330 Fall 2023}
+\renewcommand{\headrulewidth}{0pt}
+
+\begin{document}
+	\section*{Database Schema Overview}
+		\begin{enumerate}
+		    \item \textbf{Table:} \texttt{departments}
+		    \begin{itemize}
+		        \item \textbf{Purpose:} Represents university departments.
+		        \item \textbf{Fields:}
+		        \begin{itemize}
+		            \item \texttt{id}: Primary key, uniquely identifies a department.
+		            \item \texttt{name}: Name of the department (unique).
+		            \item \texttt{code}: A unique, maximum four-character code representing the department.
+		        \end{itemize}
+		        \item \textbf{Relationships:} Has many \texttt{Faculty} members and \texttt{Programs}.
+		    \end{itemize}
+
+		    \item \textbf{Table:} \texttt{faculty}
+		    \begin{itemize}
+		        \item \textbf{Purpose:} Stores information about faculty members.
+		        \item \textbf{Fields:}
+		        \begin{itemize}
+		            \item \texttt{id}: Primary key, uniquely identifies a faculty member.
+		            \item \texttt{name}: Name of the faculty member.
+		            \item \texttt{email}: Email address of the faculty member (unique).
+		            \item \texttt{rank}: Academic rank (full, associate, assistant, adjunct).
+		            \item \texttt{department\_code}: Foreign key linking to the \texttt{departments} table.
+		        \end{itemize}
+		        \item \textbf{Relationships:} Belongs to a \texttt{Department}.
+		    \end{itemize}
+
+		    \item \textbf{Table:} \texttt{programs}
+		    \begin{itemize}
+		        \item \textbf{Purpose:} Represents academic programs or degrees.
+		        \item \textbf{Fields:}
+		        \begin{itemize}
+		            \item \texttt{id}: Primary key, uniquely identifies a program.
+		            \item \texttt{name}: Name of the program (unique).
+		            \item \texttt{department\_code}: Foreign key linking to the \texttt{departments} table.
+		            \item \texttt{in\_charge\_id}: Foreign key linking to a \texttt{Faculty} member who is in charge of the program.
+		        \end{itemize}
+		        \item \textbf{Relationships:} Belongs to a \texttt{Department} and has many \texttt{Courses} through \texttt{program\_courses}.
+		    \end{itemize}
+
+		    \item \textbf{Table:} \texttt{courses}
+		    \begin{itemize}
+		        \item \textbf{Purpose:} Contains information about courses offered by departments.
+		        \item \textbf{Fields:}
+		        \begin{itemize}
+		            \item \texttt{id}: Primary key, a combination of department code and a 4-digit number.
+		            \item \texttt{title}: Title of the course.
+		            \item \texttt{description}: A text describing the course.
+		            \item \texttt{department\_code}: Foreign key linking to the \texttt{departments} table.
+		        \end{itemize}
+		        \item \textbf{Relationships:} Belongs to a \texttt{Department}, has many \texttt{Sections}, and is associated with many \texttt{Programs} through \texttt{program\_courses}.
+		    \end{itemize}
+
+		    \item \textbf{Table:} \texttt{sections}
+		    \begin{itemize}
+		        \item \textbf{Purpose:} Details about specific course offerings each semester.
+		        \item \textbf{Fields:}
+		        \begin{itemize}
+		            \item \texttt{id}: Primary key, uniquely identifies a section.
+		            \item \texttt{number}: A 3-digit number representing the section.
+		            \item \texttt{semester}: The semester when the course is offered.
+		            \item \texttt{year}: The year when the course is offered.
+		            \item \texttt{course\_id}: Foreign key linking to the \texttt{courses} table.
+		            \item \texttt{instructor\_id}: Foreign key linking to the \texttt{faculty} table.
+		            \item \texttt{enrollment\_count}: Number of students enrolled in the section.
+		        \end{itemize}
+		        \item \textbf{Relationships:} Belongs to a \texttt{Course} and has a \texttt{Faculty} member as the instructor.
+		    \end{itemize}
+
+		    \item \textbf{Table:} \texttt{learning\_objectives}
+		    \begin{itemize}
+		        \item \textbf{Purpose:} Stores learning objectives for program evaluation.
+		        \item \textbf{Fields:}
+		        \begin{itemize}
+		            \item \texttt{id}: Primary key, a code for the learning objective.
+		            \item \texttt{description}: Description of the learning objective.
+		            \item \texttt{parent\_id}: Foreign key to itself, indicating sub-objectives.
+		        \end{itemize}
+		        \item \textbf{Relationships:} Has many sub-objectives linking to itself.
+		    \end{itemize}
+
+		    \item \textbf{Table:} \texttt{program\_courses}
+		    \begin{itemize}
+		        \item \textbf{Purpose:} A junction table to establish many-to-many relationships between programs and courses.
+		        \item \textbf{Fields:}
+		        \begin{itemize}
+		            \item \texttt{program\_id}: Foreign key linking to the \texttt{programs} table.
+		            \item \texttt{course\_id}: Foreign key linking to the \texttt{courses} table.
+		        \end{itemize}
+		        \item \textbf{Relationships:} Links \texttt{Programs} to \texttt{Courses}.
+		    \end{itemize}
+
+		    \item \textbf{Table:} \texttt{course\_objectives}
+		    \begin{itemize}
+		        \item \textbf{Purpose:} Associates courses with their respective learning objectives.
+		        \item \textbf{Fields:}
+		        \begin{itemize}
+		            \item \texttt{course\_id}: Foreign key linking to the \texttt{courses} table.
+		            \item \texttt{objective\_id}: Foreign key linking to the \texttt{learning\_objectives} table.
+		            \item \texttt{program\_id}: Foreign key linking to the \texttt{programs} table.
+		        \end{itemize}
+		        \item \textbf{Relationships:} Links \texttt{Courses} to \texttt{Learning Objectives}.
+		    \end{itemize}
+
+		    \item \textbf{Table:} \texttt{section\_evaluations}
+		    \begin{itemize}
+		        \item \textbf{Purpose:} Records the evaluation of learning objectives for each course section.
+		        \item \textbf{Fields:}
+		        \begin{itemize}
+		            \item \texttt{section\_id}: Foreign key linking to the \texttt{sections} table.
+		            \item \texttt{objective\_id}: Foreign key linking to the \texttt{learning\_objectives} table.
+		            \item \texttt{evaluation\_method}: The method used for evaluating the objective.
+		            \item \texttt{students\_met}: Number of students who met the objective.
+		        \end{itemize}
+		        \item \textbf{Relationships:} Links \texttt{Sections} to \texttt{Learning Objectives}.
+		    \end{itemize}
+		\end{enumerate}
+
+		\section*{Installation}
+		Before installing the University Program Evaluation System, ensure that your environment meets the following prerequisites.
+
+		\subsection{Prerequisites}
+		\begin{itemize}
+		    \item Python 3.8 or later
+		    \item Pip (Python package installer)
+		    \item A database system supported by SQLAlchemy (e.g., SQLite, PostgreSQL, MySQL)
+		    \item Tkinter for the graphical user interface (usually comes pre-installed with Python)
+		\end{itemize}
+
+		\subsection{Setting up the Environment}
+		\begin{enumerate}
+		    \item Install Python and Pip and follow the instructions for your operating system.
+		    \item Install required Python libraries:
+		    \begin{minted}{bash}
+pip install sqlalchemy tk
+		    \end{minted}
+		    \item Install a database system of your choice. This guide will use SQLite for simplicity.
+		    \begin{minted}{bash}
+pip install sqlite
+		    \end{minted}
+		\end{enumerate}
+
+		\subsection{Downloading and Configuring the Application}
+		\begin{enumerate}
+		    \item Download the application source code from the provided repository or location.
+		    \item Extract the contents if in a compressed format.
+		    \item Navigate to the application's root directory in your terminal.
+		    \item Modify the `main.py` file to set up the database connection. Here's an example using SQLite:
+		    \begin{minted}{python}
+# main.py
+from sqlalchemy import create_engine
+engine = create_engine('sqlite:///university_programs.db')
+		    \end{minted}
+		\end{enumerate}
+
+		\section*{Usage}
+		This section covers how to run and use the University Program Evaluation System.
+
+		\subsection{Starting the Application}
+		\begin{enumerate}
+		    \item Open a terminal.
+		    \item Navigate to the application's root directory.
+		    \item Run the following command:
+		    \begin{minted}{bash}
+python gui.py
+		    \end{minted}
+		    \item This will open the graphical user interface of the application.
+		\end{enumerate}
+
+		\subsection{Navigating the Interface}
+		The application has various tabs for data entry, querying, and settings. Each tab is dedicated to a specific function.
+
+		\subsubsection{Data Entry}
+		You can enter data for departments, faculty, programs, courses, etc. To enter data:
+		\begin{enumerate}
+		    \item Click on the ‘Data Entry’ tab.
+		    \item Choose the category (e.g., Departments, Faculty) you want to add data to.
+		    \item Fill in the required fields.
+		    \item Click ‘Submit’ to save the data.
+		\end{enumerate}
+
+		\subsubsection{Data Query}
+		To query data:
+		\begin{enumerate}
+		    \item Click on the ‘Data Query’ tab.
+		    \item Choose the category you want to query (e.g., Department, Program).
+		    \item Fill in the query parameters.
+		    \item Click ‘Submit’ to view the results.
+		\end{enumerate}
+
+		\subsubsection{Settings}
+		To reset the database:
+		\begin{enumerate}
+		    \item Click on the ‘Settings’ menu in the top bar.
+		    \item Select ‘Reset Database’.
+		    \item Confirm the action if prompted.
+		\end{enumerate}
+
+		\section*{Implementation Manual}
+			\subsection*{gui.py}
+			\begin{enumerate}
+			    \item \textbf{Validation Functions}: A collection of functions for validating user input in GUI forms. Each function corresponds to a specific type of input, ensuring correctness and consistency of data.
+			    \item \textbf{Data Handling Functions}: These functions interact with the database to perform operations like adding, updating, and querying data based on user inputs from the GUI.
+			    \item \textbf{GUI Setup Functions}: Responsible for initializing and configuring various components of the GUI, such as tabs, buttons, entry fields, etc.
+			    \item \textbf{Entry and Query Field Setup}: Functions that create and manage entry fields for data input and query operations in the GUI.
+			    \item \textbf{Main GUI Initialization}: The entry point for initializing the entire GUI application.
+			\end{enumerate}
+
+			\subsection*{db.py}
+			\begin{enumerate}
+			    \item \textbf{SessionManager Class}: Manages database sessions, providing an interface for executing various database operations.
+			    \item \textbf{Database Operation Functions}: Functions for adding and querying different entities in the database such as departments, faculty, programs, courses, etc.
+			    \item \textbf{Specialized Query Functions}: Includes complex queries for retrieving specific data, like program evaluation results based on semester or year.
+			\end{enumerate}
+
+			\subsection*{main.py}
+			\begin{enumerate}
+			    \item \textbf{Database Initialization}: Establishes the initial connection to the database and sets up the database schema.
+			    \item \textbf{GUI Launch}: The starting point of the application, responsible for launching the GUI.
+			\end{enumerate}
+
+			\section*{Program Code}
+			\subsection*{main.py}
+			\inputminted[fontsize=\footnotesize, linenos]{python}{main.py}
+			\newpage
+
+			\subsection*{gui.py}
+			\inputminted[fontsize=\footnotesize, linenos]{python}{gui.py}
+			\newpage
+
+			\subsection*{db.py}
+			\inputminted[fontsize=\footnotesize, linenos]{python}{db.py}
+			
+
+\end{document}
